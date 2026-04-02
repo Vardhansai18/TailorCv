@@ -1,0 +1,62 @@
+Venu Gopal Nakkella
+ServiceNow Developer
+nakkellavenu0@gmail.com +91 7780727748 India LinkedIn GitHub
+SUMMARY
+A proactive and fast learner with over 3 years of overall IT experience, including 2+ years of hands-on experience in developing and maintaining
+ServiceNow ITIL processes. Skilled in designing, configuring, and implementing ServiceNow modules such as ITSM and Integration. Possess
+strong functional and technical expertise in ServiceNow development, including Business Rules, Client Scripts, UI Policies, Flow Designer,
+Notifications, and Integrations. Experienced in delivering medium to large-scale implementations with a focus on automation and process
+optimization.
+PROFESSIONAL EXPERIENCE
+Software Engineer Level 1
+Hexaware Technologies Limited
+01/2024 – Present
+•Experienced in implementing ITSM modules such as Incident, Problem, Change, Knowledge, and Request Management.
+•Proficient in end-to-end development using Business Rules, Client Scripts, UI Policies, Script Includes, Glide Ajax, Scheduled Jobs, and other
+client/server-side scripts.
+•Hands-on experience in instance cloning and upgrades across DEV, TEST, and PROD environments to the latest ServiceNow releases.
+•Currently working on a custom application project, collaborating with multiple third-party integrators to ensure seamless platform
+communication.
+•Developed Scripted REST APIs to create records in custom tables when triggered by external systems.
+•Implemented REST Messages to fetch or update data from third-party integrators, integrated with UI Actions, Script Includes, and Client
+Scripts.
+•Ensured secure integrations by implementing OAuth 2.0, Basic Authentication, and Client Tokens for authentication.
+•Delivered complex projects within deadlines while maintaining high quality and client satisfaction.
+•Strong in debugging, troubleshooting, and root cause analysis, ensuring timely issue resolution.
+•Actively participated in Agile ceremonies including sprint planning, daily stand-ups, and retrospectives to support smooth project execution.
+Software Engineer Intern
+Syncron
+01/2023 – 12/2023
+•Collaborated with cross-functional teams to understand business requirements and deliver backend solutions using Java and Spring Boot.
+•Developed and supported REST APIs and backend services, ensuring performance and scalability.
+•Worked in an Agile environment, contributing to timely delivery of project milestones.
+•Gained exposure to Full Stack Development (HTML, CSS, JavaScript, MySQL).
+•Coordinated with ServiceNow teams for requirement discussions and integration support, gaining exposure to ITSM processes and
+platform capabilities.
+•Participated in code reviews and technical discussions, improving understanding of clean code practices and agile development workflows.
+SKILLS
+ServiceNow: IT Service Management, Scripting (Business Rules, Script Includes, Schedule Jobs, UI Actions, Client Scripts, Email Actions)
+Rest API's.
+Plaforms and tools: Postman, Eclipse VSCode, Github MY SQL Workbench.
+Programming Languages: Javascript Java C++ HTML CSS SQL
+AWARDS
+•Secured 1st position by achieving the highest score in ServiceNow training assessments and received recognition and gifts from Hexaware
+Technologies. - Link
+•Hall of Fame Award recipient for outstanding contributions and excellence, recognised and applauded by client testimonials. - Link
+CERTIFICATES
+ServiceNow Core Certifications: ServiceNow Certified System Administrator (CSA) ServiceNow Certified Application Developer (CAD)
+ServiceNow Micro Certifications: Flow Designer Now Assist Executive Agentic AI Executive Predictive Intelligence - Certificates
+Additional Certifications: Java Full Stack Development From Naresh I Technologies Java Basic (HackerRank) SQL BASIC( HackerRank)
+SQL Intermediate (HackerRank) - Certificates
+EDUCATION
+Bachelor's in Electronics and Communication Engineering
+VNR VJIET, HYDERBAD
+08/2019 – 09/2023
+CGPA - 8.27
+|
+| | |
+| | | | |
+|
+| | |
+| |
+|

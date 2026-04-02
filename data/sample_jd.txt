@@ -1,0 +1,35 @@
+Hands-on experience in implementing and supporting ServiceNow GRC/IRM modules.
+
+Advanced Platform Development: Design, develop, and implement complex technical solutions and custom applications within the ServiceNow platform using expertise in JavaScript, Glide Scripting, HTML, CSS, Angular JS, and other relevant technologies.
+
+Module Expertise: Lead configuration and development efforts across core ServiceNow modules relevant to the Employee Experience pillar, potentially including IT Service Management (ITSM), HR Service Delivery (HRSD), Customer Service Management (CSM), and Custom Applications/App Engine.
+
+Integration and Automation: Architect, build, and maintain robust, bi-directional integrations between ServiceNow and other enterprise systems (e.g., Workday, Coupa, Identity Platforms) using IntegrationHub, REST/SOAP APIs, and external integration platforms (e.g., Boomi, Workato). Drive automation through Flow Designer and low-code solutions.
+
+Technical Design and Governance: Participate in technical design sessions, providing expertise on best practices for platform architecture, security, performance, and scalability. Ensure all development adheres to architectural standards and upgrade paths.
+
+Code Review and Quality Assurance: Conduct thorough code reviews, lead unit and system testing, and ensure high-quality code and configuration practices are maintained across the Digital POD development lifecycle.
+
+Operational Excellence: Manage platform upgrades (e.g., bi-annual releases), system maintenance, cloning, and performance monitoring. Proactively identify and resolve technical debt and performance bottlenecks.
+
+Mentorship and Collaboration: Mentor junior engineers, actively participate in Agile ceremonies, and collaborate closely with Business Systems Analysts, Product Owners, and cross-functional engineering teams to deliver committed features.
+
+Qualifications
+
+Experience in developing, configuring, and administering the ServiceNow platform in an enterprise environment.
+
+Proven expertise in advanced ServiceNow scripting and development, including Business Rules, Script Includes, Client Scripts, UI Policies, Workflows, Flow Designer, and custom application development (App Engine).
+
+Strong experience with complex ServiceNow IntegrationHub or direct API integrations with external systems (e.g., REST, SOAP).
+
+Deep functional and technical knowledge in at least two major ServiceNow modules, such as ITSM, HRSD, or Custom Applications/Platform Architecture.
+
+Current Certified ServiceNow Administrator (CSA) certification is required; additional certifications (e.g., Certified Application Developer, ITSM Implementation Specialist) are highly desirable.
+
+Experience participating in multiple full-cycle ServiceNow implementations and version upgrades.
+
+Understanding of system security, data privacy best practices, and performance tuning within the ServiceNow environment.
+
+Excellent problem-solving skills, attention to detail, and ability to manage multiple priorities in a fast-paced Agile environment.
+
+Strong written and verbal communication skills, capable of explaining complex technical solutions to non-technical stakeholders.
