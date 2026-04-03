@@ -1233,6 +1233,7 @@
             let stepCount = 0;
             const totalSteps = 12;
             let currentIteration = 0;
+            let originalScoreMessage = 'Original scored ✓';
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -1259,10 +1260,11 @@
                         } else if (data.step === 'before_score') {
                             updateStep('step-score-original', 'in-progress', data.message);
                         } else if (data.step === 'before_score_done') {
+                            originalScoreMessage = data.message;
                             updateStep('step-score-original', 'completed', data.message);
                         } else if (data.step === 'generate' || data.step === 'generated') {
                             updateStep('step-parse', 'completed', 'Resume parsed ✓');
-                            updateStep('step-score-original', 'completed', 'Original scored ✓');
+                            updateStep('step-score-original', 'completed', originalScoreMessage);
                             updateStep('step-generate', 'in-progress', data.message);
                         } else if (data.step === 'generated') {
                             updateStep('step-generate', 'completed', data.message);
