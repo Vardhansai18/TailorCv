@@ -62,17 +62,36 @@ def main():
     )
     parser.add_argument(
         "--model",
-        default="google_genai:gemini-2.5-flash-lite",
-        help="Model name in provider:model format (default: google_genai:gemini-2.5-flash-lite)",
+        default="anthropic:claude-sonnet-4-6",
+        help="Model name in provider:model format (default: anthropic:claude-sonnet-4-6)",
+    )
+    parser.add_argument(
+        "--base-url",
+        default="",
+        help="Custom API base URL (for corporate/proxy endpoints)",
     )
 
     args = parser.parse_args()
 
-    # Validate API key
-    if not os.environ.get("GOOGLE_API_KEY"):
-        print("Error: Set the GOOGLE_API_KEY environment variable.")
-        print("  export GOOGLE_API_KEY='your-api-key-here'")
-        sys.exit(1)
+    # Validate API key based on provider
+    if args.base_url:
+        # Custom endpoint uses OPENAI_API_KEY
+        if not os.environ.get("OPENAI_API_KEY"):
+            print("Error: Set the OPENAI_API_KEY environment variable for custom endpoints.")
+            print("  export OPENAI_API_KEY='your-api-key-here'")
+            sys.exit(1)
+    else:
+        provider = args.model.split(":")[0] if ":" in args.model else "google_genai"
+        api_key_map = {
+            "google_genai": "GOOGLE_API_KEY",
+            "anthropic": "ANTHROPIC_API_KEY",
+            "openai": "OPENAI_API_KEY",
+        }
+        required_key = api_key_map.get(provider, f"{provider.upper()}_API_KEY")
+        if not os.environ.get(required_key):
+            print(f"Error: Set the {required_key} environment variable.")
+            print(f"  export {required_key}='your-api-key-here'")
+            sys.exit(1)
 
     resume_text = load_text(args.resume)
     jd_text = load_text(args.jd)
@@ -95,6 +114,7 @@ def main():
         "job_description": jd_text,
         "custom_instructions": args.instructions,
         "model_name": args.model,
+        "base_url": args.base_url,
         "latex_sections": {},
         "full_latex": "",
         "ats_score": 0,

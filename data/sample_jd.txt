@@ -1,35 +1,27 @@
-Hands-on experience in implementing and supporting ServiceNow GRC/IRM modules.
+Strong knowledge of software and system testing, with a minimum of 3 years test experience.
 
-Advanced Platform Development: Design, develop, and implement complex technical solutions and custom applications within the ServiceNow platform using expertise in JavaScript, Glide Scripting, HTML, CSS, Angular JS, and other relevant technologies.
+Proficiency in Python Scripting and Object-Oriented Programming Concepts.
 
-Module Expertise: Lead configuration and development efforts across core ServiceNow modules relevant to the Employee Experience pillar, potentially including IT Service Management (ITSM), HR Service Delivery (HRSD), Customer Service Management (CSM), and Custom Applications/App Engine.
+Minimum of 3 years test automation experience with python is required.
 
-Integration and Automation: Architect, build, and maintain robust, bi-directional integrations between ServiceNow and other enterprise systems (e.g., Workday, Coupa, Identity Platforms) using IntegrationHub, REST/SOAP APIs, and external integration platforms (e.g., Boomi, Workato). Drive automation through Flow Designer and low-code solutions.
+Experience in developing, setting up and working with complex test automation framework for parallel test execution on multiple platforms.
 
-Technical Design and Governance: Participate in technical design sessions, providing expertise on best practices for platform architecture, security, performance, and scalability. Ensure all development adheres to architectural standards and upgrade paths.
+Knowledge on Hardware clustering, High Availability and Failover systems.
 
-Code Review and Quality Assurance: Conduct thorough code reviews, lead unit and system testing, and ensure high-quality code and configuration practices are maintained across the Digital POD development lifecycle.
+Strong understanding on Linux Operating system concepts and file systems.
 
-Operational Excellence: Manage platform upgrades (e.g., bi-annual releases), system maintenance, cloning, and performance monitoring. Proactively identify and resolve technical debt and performance bottlenecks.
+Willingness and ability to learn and adopt new programming languages and environments
 
-Mentorship and Collaboration: Mentor junior engineers, actively participate in Agile ceremonies, and collaborate closely with Business Systems Analysts, Product Owners, and cross-functional engineering teams to deliver committed features.
+Knowledge on containerization technologies like Dockers and Kubernetes
 
-Qualifications
+Working experience in Agile based software delivery models.
 
-Experience in developing, configuring, and administering the ServiceNow platform in an enterprise environment.
+Exposure to CI/CD tools is a plus. Preferably GIT CI/CD pipelines.
 
-Proven expertise in advanced ServiceNow scripting and development, including Business Rules, Script Includes, Client Scripts, UI Policies, Workflows, Flow Designer, and custom application development (App Engine).
+Knowledge of IP networking:  routing, switching, and network standards from layer 1 on up through the transport and application layers.   
 
-Strong experience with complex ServiceNow IntegrationHub or direct API integrations with external systems (e.g., REST, SOAP).
+Experience working with platform hardware at a low-level a plus
 
-Deep functional and technical knowledge in at least two major ServiceNow modules, such as ITSM, HRSD, or Custom Applications/Platform Architecture.
+Creative and innovative problem-solving skills.
 
-Current Certified ServiceNow Administrator (CSA) certification is required; additional certifications (e.g., Certified Application Developer, ITSM Implementation Specialist) are highly desirable.
-
-Experience participating in multiple full-cycle ServiceNow implementations and version upgrades.
-
-Understanding of system security, data privacy best practices, and performance tuning within the ServiceNow environment.
-
-Excellent problem-solving skills, attention to detail, and ability to manage multiple priorities in a fast-paced Agile environment.
-
-Strong written and verbal communication skills, capable of explaining complex technical solutions to non-technical stakeholders.
+Exceptionally strong written and verbal communication skills.

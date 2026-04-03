@@ -2,6 +2,8 @@ import re
 import time
 
 from langchain.chat_models import init_chat_model
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
 
 from src.prompts import ATS_RESUME_PROMPT, ATS_SCORE_PROMPT, LATEX_PREAMBLE
 from src.state import ResumeState
@@ -10,15 +12,22 @@ MAX_RETRIES = 3
 RETRY_BASE_DELAY = 15  # seconds
 
 
-def get_llm(model_name: str = "google_genai:gemini-2.5-flash-lite"):
+def get_llm(model_name: str = "anthropic:claude-sonnet-4-6", base_url: str = ""):
+    if base_url:
+        # Custom endpoint — use OpenAI-compatible client with base_url
+        return ChatOpenAI(
+            model=model_name,
+            base_url=base_url,
+            temperature=0.3,
+        )
     return init_chat_model(model_name, temperature=0.3)
 
 
-def _invoke_with_retry(llm, prompt: str) -> str:
+def _invoke_with_retry(llm, messages) -> str:
     """Invoke the LLM with automatic retry on rate-limit (429) errors."""
     for attempt in range(MAX_RETRIES):
         try:
-            response = llm.invoke(prompt)
+            response = llm.invoke(messages)
             return response.content.strip()
         except Exception as e:
             if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
@@ -52,7 +61,7 @@ def parse_inputs(state: ResumeState) -> dict:
 
 def generate_resume(state: ResumeState) -> dict:
     """Call the LLM with the ATS resume prompt to generate LaTeX sections."""
-    llm = get_llm(state.get("model_name", "google_genai:gemini-2.5-flash-lite"))
+    llm = get_llm(state.get("model_name", "anthropic:claude-sonnet-4-6"), state.get("base_url", ""))
 
     feedback_section = ""
     if state.get("feedback"):
@@ -70,7 +79,12 @@ def generate_resume(state: ResumeState) -> dict:
         feedback_section=feedback_section,
     )
 
-    latex_body = _invoke_with_retry(llm, prompt)
+    messages = [
+        SystemMessage(content="IMPORTANT: Do NOT search for information. Do NOT use any tools. Do NOT call any functions. All the data you need is provided in the user message below. You are an expert Resume Optimization Agent. Your ONLY task is to generate valid LaTeX code for an ATS-optimized resume. Output ONLY raw LaTeX code starting with \\begin{center} and ending with \\end{document}. No explanations, no markdown fences, no tool calls."),
+        HumanMessage(content=prompt),
+    ]
+
+    latex_body = _invoke_with_retry(llm, messages)
 
     # Strip markdown code fences if present
     latex_body = re.sub(r"^```(?:latex)?\s*", "", latex_body)
@@ -86,11 +100,17 @@ def assemble_latex(state: ResumeState) -> dict:
     """Combine the LaTeX preamble with generated body into a full document."""
     body = state.get("latex_sections", {}).get("body", "")
 
-    # If the body already contains \documentclass, use it as-is
+    # Strip any LLM-generated preamble — always use our known-good preamble
     if r"\documentclass" in body:
-        full_latex = body
-    else:
-        full_latex = LATEX_PREAMBLE + "\n" + body
+        # Extract only the content after \begin{document}
+        doc_start = body.find(r"\begin{document}")
+        if doc_start != -1:
+            body = body[doc_start + len(r"\begin{document}"):]
+        # Also remove \end{document} — we'll add it back
+        body = body.replace(r"\end{document}", "")
+
+    # If body starts with \begin{center} before a \documentclass, take it as-is
+    full_latex = LATEX_PREAMBLE + "\n" + body.strip()
 
     # Fix double-backslash LaTeX commands from LLM output
     full_latex = full_latex.replace("\\\\textbf", "\\textbf")
@@ -107,25 +127,37 @@ def assemble_latex(state: ResumeState) -> dict:
 
 def score_resume(state: ResumeState) -> dict:
     """Call the LLM with the ATS scoring prompt to evaluate the generated resume."""
-    llm = get_llm(state.get("model_name", "google_genai:gemini-2.5-flash-lite"))
+    llm = get_llm(state.get("model_name", "anthropic:claude-sonnet-4-6"), state.get("base_url", ""))
 
     prompt = ATS_SCORE_PROMPT.format(
         job_description=state["job_description"],
         resume_latex=state["full_latex"],
     )
 
-    report = _invoke_with_retry(llm, prompt)
+    messages = [
+        SystemMessage(content="IMPORTANT: Do NOT search for information. Do NOT use any tools. Do NOT call any functions. All the data you need is provided in the user message below. You are an expert ATS Resume Analyst. Evaluate the resume against the job description and output the score report DIRECTLY. Start your response with 'OVERALL_SCORE: ' followed by a number 0-100."),
+        HumanMessage(content=prompt),
+    ]
 
-    # Extract numeric score from the report
+    report = _invoke_with_retry(llm, messages)
+
+    # Extract numeric score from the report using multiple patterns
     score = 0
-    score_match = re.search(r"OVERALL_SCORE:\s*(\d+)", report)
-    if score_match:
-        score = int(score_match.group(1))
-    else:
-        # Fallback: look for "Overall Score: XX / 100"
-        score_match = re.search(r"Overall Score:\s*(\d+)\s*/\s*100", report)
-        if score_match:
-            score = int(score_match.group(1))
+    patterns = [
+        r"OVERALL_SCORE:\s*(\d+)",
+        r"Overall Score:\s*(\d+)\s*/\s*100",
+        r"Overall Score:\s*\*{0,2}(\d+)\*{0,2}\s*/\s*100",
+        r"(?:Total|Final|ATS)\s*Score:\s*(\d+)\s*/\s*100",
+        r"(?:Total|Final|ATS)\s*Score:\s*(\d+)",
+        r"\*{2}(\d+)\s*/\s*100\*{2}",
+        r"(\d+)\s*/\s*100",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, report, re.IGNORECASE)
+        if match:
+            score = int(match.group(1))
+            if 0 < score <= 100:
+                break
 
     return {
         "ats_score": score,

@@ -1,62 +1,96 @@
-Venu Gopal Nakkella
-ServiceNow Developer
-nakkellavenu0@gmail.com +91 7780727748 India LinkedIn GitHub
-SUMMARY
-A proactive and fast learner with over 3 years of overall IT experience, including 2+ years of hands-on experience in developing and maintaining
-ServiceNow ITIL processes. Skilled in designing, configuring, and implementing ServiceNow modules such as ITSM and Integration. Possess
-strong functional and technical expertise in ServiceNow development, including Business Rules, Client Scripts, UI Policies, Flow Designer,
-Notifications, and Integrations. Experienced in delivering medium to large-scale implementations with a focus on automation and process
-optimization.
-PROFESSIONAL EXPERIENCE
-Software Engineer Level 1
-Hexaware Technologies Limited
-01/2024 – Present
-•Experienced in implementing ITSM modules such as Incident, Problem, Change, Knowledge, and Request Management.
-•Proficient in end-to-end development using Business Rules, Client Scripts, UI Policies, Script Includes, Glide Ajax, Scheduled Jobs, and other
-client/server-side scripts.
-•Hands-on experience in instance cloning and upgrades across DEV, TEST, and PROD environments to the latest ServiceNow releases.
-•Currently working on a custom application project, collaborating with multiple third-party integrators to ensure seamless platform
-communication.
-•Developed Scripted REST APIs to create records in custom tables when triggered by external systems.
-•Implemented REST Messages to fetch or update data from third-party integrators, integrated with UI Actions, Script Includes, and Client
-Scripts.
-•Ensured secure integrations by implementing OAuth 2.0, Basic Authentication, and Client Tokens for authentication.
-•Delivered complex projects within deadlines while maintaining high quality and client satisfaction.
-•Strong in debugging, troubleshooting, and root cause analysis, ensuring timely issue resolution.
-•Actively participated in Agile ceremonies including sprint planning, daily stand-ups, and retrospectives to support smooth project execution.
-Software Engineer Intern
-Syncron
-01/2023 – 12/2023
-•Collaborated with cross-functional teams to understand business requirements and deliver backend solutions using Java and Spring Boot.
-•Developed and supported REST APIs and backend services, ensuring performance and scalability.
-•Worked in an Agile environment, contributing to timely delivery of project milestones.
-•Gained exposure to Full Stack Development (HTML, CSS, JavaScript, MySQL).
-•Coordinated with ServiceNow teams for requirement discussions and integration support, gaining exposure to ITSM processes and
-platform capabilities.
-•Participated in code reviews and technical discussions, improving understanding of clean code practices and agile development workflows.
-SKILLS
-ServiceNow: IT Service Management, Scripting (Business Rules, Script Includes, Schedule Jobs, UI Actions, Client Scripts, Email Actions)
-Rest API's.
-Plaforms and tools: Postman, Eclipse VSCode, Github MY SQL Workbench.
-Programming Languages: Javascript Java C++ HTML CSS SQL
-AWARDS
-•Secured 1st position by achieving the highest score in ServiceNow training assessments and received recognition and gifts from Hexaware
-Technologies. - Link
-•Hall of Fame Award recipient for outstanding contributions and excellence, recognised and applauded by client testimonials. - Link
-CERTIFICATES
-ServiceNow Core Certifications: ServiceNow Certified System Administrator (CSA) ServiceNow Certified Application Developer (CAD)
-ServiceNow Micro Certifications: Flow Designer Now Assist Executive Agentic AI Executive Predictive Intelligence - Certificates
-Additional Certifications: Java Full Stack Development From Naresh I Technologies Java Basic (HackerRank) SQL BASIC( HackerRank)
-SQL Intermediate (HackerRank) - Certificates
-EDUCATION
-Bachelor's in Electronics and Communication Engineering
-VNR VJIET, HYDERBAD
-08/2019 – 09/2023
-CGPA - 8.27
-|
-| | |
-| | | | |
-|
-| | |
-| |
-|
+Mohan Vamsi Chekuri
++91 7702437999 | chekurimohanvamsi@gmail.com | https://www.linkedin.com/in/mvamsi73 |
+OIC, SOA, VBCS, Java, Java Script Developer
+Professional Summary
+Software Development Engineer with 3 years of experience specializing in Oracle Integration Cloud (OIC), SOA, and
+VBCS. Proven expertise in designing scalable integrations, troubleshooting complex workflows, and developing automation
+solutions. Strong in API integrations, event-driven architecture, and root cause analysis, with a focus on
+improving system reliability and performance.
+Education
+KL University Vijayawada, India
+Bachelor of Technology in Computer Science and Engineering, CGPA: 8.84/10 2019-2023
+Professional Experience
+Consulting Developer Jan 2023 – Present
+Oracle Hyderabad
+Oracle Projects:
+1. Retail Integration (OIC,ERP,SOA,Java Script,MFT,OCI,API Gateway,Oracle Object Storage,DB,SQL)
+• Designed and implemented end-to-end integration solutions using OIC (Gen2 & Gen3) with File-Based,
+Object Storage, REST, SOAP, ERP, and Field Service adapters, including Java Script callouts for complex
+data transformation and routing.
+• Designed and developed multiple integrations to streamline data exchange between WMS, MFCS, and
+SIOCS, OOCS, ensuring accuracy and consistency across business systems.
+• Led migration from OIC Gen2 to Gen3, resolving critical issues and improving API performance by 50%;
+optimized bulk data processing to handle 1M+ records, reducing execution time from 1 hour to 25
+minutes.
+• Enhanced system security and reliability by implementing OCI API Gateway, and developed robust BPEL
+processes in Oracle SOA Suite with advanced exception handling and integration with JMS queues
+(WebLogic).
+• Executed large-scale data integrations using FBDI (ERP modules including invoices, POs, assets, Financial
+modules) and HDL (HCM employee data migration), supported by strong SQL and database expertise to
+ensure high data accuracy and performance.
+2. CS4I Portal Accelerator (VBCS, OJET, RedWood, JavaScript, CSS)
+• Developed dynamic user interfaces for entire Oracle Utility Self Service Portal Product using Oracle
+Java Script Extension Toolkit (OJET), focusing on component-based architecture to enhance interaction
+and improve code maintainability.
+• Translated Figma UI designs into fully responsive web applications using Redwood and custom components in
+VBCS, and built OIC integration endpoints to connect backend APIs efficiently.
+• Diagnosed and resolved complex application bugs, ensured timely code delivery, and actively contributed to
+successful production deployments.
+• Maintained 100% clean code by consistently applying design patterns, ensuring readability, scalability, and
+long-term maintainability.
+• Enhanced user experience by interpreting business requirements into complex UI designs, leading to a
+measurable 10% improvement in user satisfaction.
+• Adopted Agile and DevOps best practices, including Git version control and CI/CD pipeline integration,
+significantly optimizing development workflows and release cycles.
+3. BHE OFS (OIC, ATP DB, OCI Queues, OFS Cloud)
+• Designed and implemented Bi-Directional integrations between Oracle Field Service (OFS) Cloud and
+Oracle C2M using OIC, enabling real-time synchronization of activities, work orders, and resource data.
+• Built scalable orchestration flows leveraging OFS REST APIs, OFS Adapters, XSLT/JavaScript, and
+ATP database for intermediate state management, status tracking, and high-volume transaction processing.
+• Enhanced reliability through advanced error handling and reprocessing frameworks, and implemented
+asynchronous messaging and decoupled integrations using OCI Queues.
+• Automated OFS resource scheduling and optimized performance using parallel processing, pagination, and
+bulk data handling, while enforcing security via OAuth and API Gateway policies.
+• Implemented event-driven architecture using OIC Gen3 Publish-Subscribe model, enabling real-time
+event processing, loose coupling, and scalable integrations across multiple systems.
+4. AI Innovation At Oracle (Gen AI, LLMs, Automation)
+• Led a Generative AI innovation project at Oracle to automate the conversion of XML payloads into XSLT
+code. Developed a custom automation pipeline utilizing Oracle Gen AI APIs to interact with LLMs,
+streamlining multi-prompt interactions into a single automated workflow. The system dynamically analyzes
+intermediate responses, executes predefined customized prompts internally, and delivers optimized XSLT
+output—resulting in 50% reduction in manual effort and up to 30% overall project efficiency gain.
+Data Engineer Intern Aug 2022 – Jan 2023
+Jio Platforms Remote, Hyderabad
+• Developed and maintained scalable big data pipelines for enterprise-level data processing using Apache Spark, Hive
+(HQL), Apache Airflow, and the Hadoop ecosystem, reducing data processing time by 20%.
+• Designed and optimized ETL workflows for large-scale data ingestion and transformation using tools such as Apache
+Nifi, Kafka, and HDFS, ensuring high data reliability and performance, improving data ingestion rate by 15%.
+AI Research Intern Aug 2021 – Mar 2022
+Samsung-PRISM Remote, Banglore
+• Contributed to a Artificial Intelligence project focused on developing camera solutions by creating noise
+synthetic datasets from low-light intensity images using Generative Adversarial Networks (GANs).
+• Researched and explored implementation techniques for GANs to generate realistic noise patterns for training and
+evaluation purposes, improving image quality by 10%.
+Projects
+Automatic Question Paper Generator | Java, JSP, Hibernate, MySQL, MVC Architecture
+• Designed and implemented back-end logic for dynamic question paper generation. Integrated MySQL for question
+storage and retrieval.
+• Utilized Hibernate ORM for efficient database interaction.Developed JSP pages for user input and display.
+Implemented logic to customize papers by subject, topic, and difficulty.
+Clima - Weather Monitoring System | Java, Spring Boot, Spring Boot API, JPA, JSP, MySQL, REST API Integration
+• Developed RESTful APIs using Spring Boot to fetch and expose weather data. Integrated third-party weather
+APIs and managed JSON response parsing. Used JPA for mapping Java objects to database tables.
+• Managed MySQL for storing historical and real-time weather data. Built JSP-based UI for weather data
+visualization.
+Technical Skills
+Languages: Python, Java, JavaScript, XSLT, SQL, HTML, CSS
+Technologies: OIC, OJET, SOA, MFT, Git, Docker, Gitlab CI/CD, Linux, Artificial Intelligence (AI), GAN Network
+Developer Tools: Git, Docker,Cursor, Cloud Platform, VS Code, Visual Studio, PyCharm
+Databases: MongoDB, MySQL, Oracle SQL
+Certifications
+• Oracle Cloud Infrastructure 2023 Certified Application Integration Professional
+• Oracle Cloud Infrastructure 2023 Certified Foundations Associate
+Achievements
+• Young Excellence - Received the Young Excellence Award at Oracle in 2024 for outstanding performance.
+• Innovation Excellence - Awarded Innovation Excellence at Oracle in 2025.
+• Project Excellence - Awarded Project Excellence at Oracle in 2025 for outstanding work in project.
