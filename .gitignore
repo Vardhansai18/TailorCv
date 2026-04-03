@@ -1,0 +1,30 @@
+# Output files
+output/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.out
+*.toc
+
+# OS
+.DS_Store
+Thumbs.db
