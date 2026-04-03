@@ -875,7 +875,8 @@
                 <span>resume.tex</span>
                 <div class="actions">
                     <button class="toolbar-btn" onclick="copyLatex()">Copy</button>
-                    <button class="toolbar-btn primary" id="download-btn" onclick="downloadTex()">Download .tex</button>
+                    <button class="toolbar-btn" id="download-btn" onclick="downloadTex()">Download .tex</button>
+                    <button class="toolbar-btn primary" id="download-pdf-btn" onclick="downloadPdf()">Download PDF</button>
                 </div>
             </div>
             <div class="latex-code">
@@ -1114,13 +1115,18 @@
         if (downloadId) {
             window.open('/api/download/' + downloadId, '_blank');
         } else {
-            // Fallback: download from memory
             const blob = new Blob([latexContent], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = 'resume.tex';
             a.click();
         }
+    }
+
+    function downloadPdf() {
+        if (!downloadId) { toast('No resume generated yet'); return; }
+        toast('Compiling PDF...');
+        window.open('/api/pdf/' + downloadId, '_blank');
     }
 
     function toast(msg) {

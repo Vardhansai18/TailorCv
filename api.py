@@ -6,6 +6,8 @@ Serves the web UI and handles resume processing via the LangGraph pipeline.
 import asyncio
 import json
 import re
+import subprocess
+import tempfile
 import uuid
 from pathlib import Path
 
@@ -205,6 +207,36 @@ async def download_tex(job_id: str):
     if not tex_path.exists():
         return HTMLResponse("File not found", status_code=404)
     return FileResponse(str(tex_path), filename="resume.tex", media_type="application/x-tex")
+
+
+@app.get("/api/pdf/{job_id}")
+async def download_pdf(job_id: str):
+    """Compile the .tex file to PDF and return it."""
+    if not re.match(r'^[a-f0-9]{8}$', job_id):
+        return HTMLResponse("Invalid job ID", status_code=400)
+    tex_path = OUTPUT_DIR / f"resume_{job_id}.tex"
+    if not tex_path.exists():
+        return HTMLResponse("File not found", status_code=404)
+
+    pdf_path = OUTPUT_DIR / f"resume_{job_id}.pdf"
+    if not pdf_path.exists():
+        # Compile in a temp dir to avoid polluting output/ with .aux/.log
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = subprocess.run(
+                ["pdflatex", "-interaction=nonstopmode", "-output-directory", tmpdir, str(tex_path)],
+                capture_output=True, text=True, timeout=30,
+            )
+            tmp_pdf = Path(tmpdir) / f"resume_{job_id}.pdf"
+            if tmp_pdf.exists():
+                import shutil
+                shutil.copy2(str(tmp_pdf), str(pdf_path))
+            else:
+                return HTMLResponse(
+                    f"PDF compilation failed:\n{result.stdout[-500:]}\n{result.stderr[-500:]}",
+                    status_code=500,
+                )
+
+    return FileResponse(str(pdf_path), filename="resume.pdf", media_type="application/pdf")
 
 
 def _sse(data: dict) -> str:
