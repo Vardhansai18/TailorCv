@@ -170,8 +170,9 @@ def evaluate_score(state: ResumeState) -> str:
     score = state.get("ats_score", 0)
     iteration = state.get("iteration", 0)
     max_iterations = state.get("max_iterations", 2)
+    threshold = state.get("threshold", 80)
 
-    if score >= 80 or iteration >= max_iterations:
+    if score >= threshold or iteration >= max_iterations:
         return "finalize"
     return "retry"
 

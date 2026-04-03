@@ -14,3 +14,4 @@ class ResumeState(TypedDict):
     feedback: str
     iteration: int
     max_iterations: int
+    threshold: int

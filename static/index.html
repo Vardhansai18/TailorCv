@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TailorCV — ATS Resume Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-card: rgba(26, 26, 26, 0.7);
+            --amber: #f5a623;
+            --amber-dim: rgba(245, 166, 35, 0.15);
+            --amber-glow: rgba(245, 166, 35, 0.3);
+            --white: #ffffff;
+            --white-dim: rgba(255, 255, 255, 0.6);
+            --green: #4caf50;
+            --red: #ef4444;
+            --font-heading: 'Playfair Display', Georgia, serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            background: var(--bg-primary);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Grid Texture ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(245,166,35,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,166,35,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Screens ── */
+        .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+        .screen.active { display: flex; }
+
+        /* ══════════════════════════════════════
+           SCREEN 1 — HERO / UPLOAD
+           ══════════════════════════════════════ */
+        #hero-screen {
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 4rem;
+        }
+
+        .hero-left {
+            flex: 1;
+            max-width: 520px;
+        }
+
+        .hero-left h1 {
+            font-family: var(--font-heading);
+            font-weight: 900;
+            font-size: 3.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-left h1 span { color: var(--amber); }
+
+        .hero-left p {
+            font-size: 0.85rem;
+            color: var(--white-dim);
+            line-height: 1.7;
+            max-width: 420px;
+        }
+
+        .hero-right {
+            flex: 1;
+            max-width: 540px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2px dashed rgba(245,166,35,0.4);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--amber);
+            background: var(--amber-dim);
+            box-shadow: 0 0 30px var(--amber-glow);
+        }
+
+        .drop-zone.has-file {
+            border-color: var(--green);
+            border-style: solid;
+        }
+
+        .drop-zone-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .drop-zone-label {
+            font-size: 0.9rem;
+            color: var(--white-dim);
+        }
+
+        .drop-zone-label strong { color: var(--amber); }
+
+        .drop-zone-filename {
+            font-size: 0.8rem;
+            color: var(--green);
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .drop-zone.has-file .drop-zone-filename { display: block; }
+
+        #resume-input { display: none; }
+
+        /* JD Text Area */
+        .jd-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+
+        .jd-card label {
+            font-size: 0.75rem;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+
+        .jd-card textarea {
+            width: 100%;
+            height: 180px;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+        }
+
+        .jd-card textarea:focus {
+            box-shadow: inset 0 0 0 1px var(--amber);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .jd-card textarea::placeholder { color: rgba(255,255,255,0.25); }
+
+        /* Settings Row */
+        .settings-row {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .setting-field {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .setting-field label {
+            font-size: 0.65rem;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .setting-field input, .setting-field select {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--white);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .setting-field input:focus, .setting-field select:focus {
+            border-color: var(--amber);
+        }
+
+        /* CTA Button */
+        .cta-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--amber);
+            color: var(--bg-primary);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-btn:hover {
+            box-shadow: 0 0 40px var(--amber-glow);
+            transform: translateY(-1px);
+        }
+
+        .cta-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .cta-btn .pulse {
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            animation: pulse-ring 2s ease-out infinite;
+            border: 2px solid var(--amber);
+            pointer-events: none;
+        }
+
+        @keyframes pulse-ring {
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.05); }
+        }
+
+        /* ══════════════════════════════════════
+           SCREEN 2 — PROCESSING
+           ══════════════════════════════════════ */
+        #processing-screen {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .terminal-box {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .terminal-title-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.8rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .terminal-title {
+            margin-left: 0.8rem;
+            font-size: 0.7rem;
+            color: var(--white-dim);
+        }
+
+        .terminal-body {
+            padding: 1.2rem;
+            min-height: 260px;
+            max-height: 360px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            opacity: 0;
+            animation: line-in 0.3s ease forwards;
+        }
+
+        .terminal-line .check { color: var(--green); }
+        .terminal-line .spinner { color: var(--amber); animation: spin 1s linear infinite; display: inline-block; }
+
+        @keyframes line-in { to { opacity: 1; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .progress-label {
+            font-size: 0.7rem;
+            color: var(--white-dim);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--amber);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 12px var(--amber-glow);
+        }
+
+        /* ══════════════════════════════════════
+           SCREEN 3 — RESULTS
+           ══════════════════════════════════════ */
+        #results-screen {
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        /* Top Keywords Bar */
+        .keywords-bar {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .keyword-group h4 {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--white-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .keyword-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .keyword-tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .keyword-tag.missing {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--red);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Split View */
+        .results-split {
+            display: flex;
+            gap: 1.5rem;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Left — Score */
+        .score-panel {
+            width: 400px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .score-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Before/After comparison */
+        .score-comparison {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .score-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .score-col-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--white-dim);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .score-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0 0.3rem;
+        }
+
+        .score-arrow .arrow-icon {
+            font-size: 1.5rem;
+            color: var(--amber);
+            animation: arrow-pulse 1.5s ease infinite;
+        }
+
+        .score-arrow .improvement-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .improvement-badge.positive {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .improvement-badge.neutral {
+            background: rgba(245, 166, 35, 0.15);
+            color: var(--amber);
+            border: 1px solid rgba(245, 166, 35, 0.3);
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(4px); }
+        }
+
+        .score-gauge {
+            position: relative;
+            width: 130px;
+            height: 130px;
+        }
+
+        .score-gauge.small {
+            width: 130px;
+            height: 130px;
+        }
+
+        .score-gauge svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .score-gauge .track {
+            fill: none;
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 8;
+        }
+
+        .score-gauge .fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.5s ease, stroke 0.3s;
+        }
+
+        .score-value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-value .number {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .score-value .label {
+            font-size: 0.6rem;
+            color: var(--white-dim);
+            margin-top: 0.3rem;
+        }
+
+        .score-meta {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .score-meta-item {
+            text-align: center;
+        }
+
+        .score-meta-item .val {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--amber);
+        }
+
+        .score-meta-item .lbl {
+            font-size: 0.6rem;
+            color: var(--white-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* ATS Report */
+        .report-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.2rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .report-card h3 {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            color: var(--amber);
+        }
+
+        .report-card pre {
+            font-size: 0.72rem;
+            line-height: 1.6;
+            color: var(--white-dim);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Right — LaTeX Code */
+        .latex-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .latex-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .latex-toolbar span {
+            font-size: 0.75rem;
+            color: var(--white-dim);
+        }
+
+        .latex-toolbar .actions { display: flex; gap: 0.6rem; }
+
+        .toolbar-btn {
+            padding: 0.4rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .toolbar-btn.primary {
+            background: var(--amber);
+            color: var(--bg-primary);
+            border-color: var(--amber);
+        }
+
+        .toolbar-btn.primary:hover { opacity: 0.9; }
+
+        .latex-code {
+            flex: 1;
+            overflow: auto;
+            padding: 1.2rem;
+        }
+
+        .latex-code pre {
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: #d4d4d4;
+            tab-size: 2;
+        }
+
+        .latex-code .kw { color: var(--amber); }
+        .latex-code .cmd { color: #569cd6; }
+        .latex-code .str { color: #ce9178; }
+        .latex-code .cmt { color: #6a9955; }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 1.2rem;
+            left: 1.2rem;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white-dim);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            #hero-screen { flex-direction: column; gap: 2rem; padding: 1.5rem; }
+            .hero-left h1 { font-size: 2.5rem; }
+            .results-split { flex-direction: column; }
+            .score-panel { width: 100%; }
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<button class="back-btn" id="back-btn" onclick="showScreen('hero')">← Back</button>
+
+<!-- ═══════ SCREEN 1: HERO ═══════ -->
+<div id="hero-screen" class="screen active">
+    <div class="hero-left">
+        <h1>Your Resume.<br><span>Engineered</span><br>for ATS.</h1>
+        <p>Upload your resume PDF and paste the job description. TailorCV's AI pipeline generates an ATS-optimized LaTeX resume, scores it, and iterates until it exceeds 80%.</p>
+    </div>
+
+    <div class="hero-right">
+        <!-- PDF Drop Zone -->
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('resume-input').click()">
+            <span class="drop-zone-icon">📄</span>
+            <div class="drop-zone-label">Drop your <strong>Resume PDF</strong> here or click to browse</div>
+            <div class="drop-zone-filename" id="file-name"></div>
+            <input type="file" id="resume-input" accept=".pdf">
+        </div>
+
+        <!-- Job Description -->
+        <div class="jd-card">
+            <label>Job Description</label>
+            <textarea id="jd-input" placeholder="Paste the full job description here..."></textarea>
+        </div>
+
+        <!-- Custom Instructions -->
+        <div class="jd-card">
+            <label>Custom Instructions (optional)</label>
+            <textarea id="instructions-input" placeholder="e.g. Emphasize Python and cloud skills, focus on backend engineering experience, highlight leadership..." style="height: 60px;"></textarea>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings-row">
+            <div class="setting-field">
+                <label>Model</label>
+                <input type="text" id="model-input" value="claude-sonnet-4-6">
+            </div>
+            <div class="setting-field">
+                <label>API Key</label>
+                <input type="password" id="apikey-input" placeholder="sk-...">
+            </div>
+            <div class="setting-field">
+                <label>Base URL</label>
+                <input type="text" id="baseurl-input" value="https://f5ai.pd.f5net.com/api">
+            </div>
+            <div class="setting-field">
+                <label>Max Iterations</label>
+                <input type="number" id="iterations-input" value="3" min="1" max="5">
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <button class="cta-btn" id="generate-btn" onclick="startGeneration()">
+            <span class="pulse"></span>
+            Analyze &amp; Generate
+        </button>
+    </div>
+</div>
+
+<!-- ═══════ SCREEN 2: PROCESSING ═══════ -->
+<div id="processing-screen" class="screen">
+    <div class="terminal-box">
+        <div class="terminal-title-bar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span class="terminal-title">tailorcv — pipeline</span>
+        </div>
+        <div class="terminal-body" id="terminal-body"></div>
+    </div>
+    <div class="progress-container">
+        <div class="progress-label">
+            <span id="progress-text">Initializing...</span>
+            <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════ SCREEN 3: RESULTS ═══════ -->
+<div id="results-screen" class="screen">
+    <!-- Keywords Bar -->
+    <div class="keywords-bar" id="keywords-bar"></div>
+
+    <div class="results-split">
+        <!-- Left: Score -->
+        <div class="score-panel">
+            <div class="score-card">
+                <div class="score-comparison">
+                    <!-- BEFORE -->
+                    <div class="score-col">
+                        <div class="score-col-label">Before</div>
+                        <div class="score-gauge small">
+                            <svg viewBox="0 0 130 130">
+                                <circle class="track" cx="65" cy="65" r="56"/>
+                                <circle class="fill" id="before-circle" cx="65" cy="65" r="56"
+                                    stroke-dasharray="352" stroke-dashoffset="352"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="number" id="before-number">--</span>
+                                <span class="label">Original</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow + Improvement -->
+                    <div class="score-arrow">
+                        <div class="arrow-icon">→</div>
+                        <div class="improvement-badge neutral" id="improvement-badge">--</div>
+                    </div>
+
+                    <!-- AFTER -->
+                    <div class="score-col">
+                        <div class="score-col-label">After</div>
+                        <div class="score-gauge small">
+                            <svg viewBox="0 0 130 130">
+                                <circle class="track" cx="65" cy="65" r="56"/>
+                                <circle class="fill" id="after-circle" cx="65" cy="65" r="56"
+                                    stroke-dasharray="352" stroke-dashoffset="352"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="number" id="after-number">--</span>
+                                <span class="label">Optimized</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="score-meta">
+                    <div class="score-meta-item">
+                        <div class="val" id="meta-iterations">-</div>
+                        <div class="lbl">Iterations</div>
+                    </div>
+                    <div class="score-meta-item">
+                        <div class="val" id="meta-threshold">80</div>
+                        <div class="lbl">Threshold</div>
+                    </div>
+                </div>
+            </div>
+            <div class="report-card" id="report-card">
+                <h3>ATS Report</h3>
+                <pre id="report-text"></pre>
+            </div>
+        </div>
+
+        <!-- Right: LaTeX -->
+        <div class="latex-panel">
+            <div class="latex-toolbar">
+                <span>resume.tex</span>
+                <div class="actions">
+                    <button class="toolbar-btn" onclick="copyLatex()">Copy</button>
+                    <button class="toolbar-btn primary" id="download-btn" onclick="downloadTex()">Download .tex</button>
+                </div>
+            </div>
+            <div class="latex-code">
+                <pre id="latex-output"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+    // ── State ──
+    let selectedFile = null;
+    let downloadId = null;
+    let latexContent = '';
+
+    // ── Screen Management ──
+    function showScreen(name) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(name + '-screen').classList.add('active');
+        document.getElementById('back-btn').style.display = (name === 'hero') ? 'none' : 'block';
+    }
+
+    // ── Drag & Drop ──
+    const dropZone = document.getElementById('drop-zone');
+    const resumeInput = document.getElementById('resume-input');
+
+    ['dragenter', 'dragover'].forEach(e => {
+        dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(e => {
+        dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragover'); });
+    });
+
+    dropZone.addEventListener('drop', ev => {
+        const file = ev.dataTransfer.files[0];
+        if (file && file.type === 'application/pdf') handleFile(file);
+    });
+
+    resumeInput.addEventListener('change', () => {
+        if (resumeInput.files[0]) handleFile(resumeInput.files[0]);
+    });
+
+    function handleFile(file) {
+        selectedFile = file;
+        dropZone.classList.add('has-file');
+        document.getElementById('file-name').textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    }
+
+    // ── Terminal Lines ──
+    function addTerminalLine(text, type = 'info') {
+        const body = document.getElementById('terminal-body');
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+
+        if (type === 'success') {
+            line.innerHTML = '<span class="check">✓</span> ' + escapeHtml(text);
+        } else if (type === 'working') {
+            line.innerHTML = '<span class="spinner">⟳</span> ' + escapeHtml(text);
+        } else if (type === 'error') {
+            line.innerHTML = '<span style="color:var(--red)">✗</span> ' + escapeHtml(text);
+        } else {
+            line.textContent = text;
+        }
+
+        body.appendChild(line);
+        body.scrollTop = body.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function setProgress(pct, text) {
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('progress-pct').textContent = pct + '%';
+        if (text) document.getElementById('progress-text').textContent = text;
+    }
+
+    // ── Generate ──
+    async function startGeneration() {
+        if (!selectedFile) { toast('Please upload a resume PDF'); return; }
+        const jd = document.getElementById('jd-input').value.trim();
+        if (!jd) { toast('Please paste a job description'); return; }
+        const apiKey = document.getElementById('apikey-input').value.trim();
+        if (!apiKey) { toast('Please enter your API key'); return; }
+
+        // Switch to processing screen
+        showScreen('processing');
+        document.getElementById('terminal-body').innerHTML = '';
+        setProgress(0, 'Starting pipeline...');
+        addTerminalLine('$ tailorcv --analyze --generate', 'info');
+        addTerminalLine('');
+
+        const formData = new FormData();
+        formData.append('resume', selectedFile);
+        formData.append('job_description', jd);
+        formData.append('model', document.getElementById('model-input').value);
+        formData.append('base_url', document.getElementById('baseurl-input').value);
+        formData.append('api_key', apiKey);
+        formData.append('instructions', document.getElementById('instructions-input').value.trim());
+        formData.append('max_iterations', document.getElementById('iterations-input').value);
+
+        try {
+            const response = await fetch('/api/generate', { method: 'POST', body: formData });
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let stepCount = 0;
+            const totalSteps = 12;
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+
+                const events = buffer.split('\n\n');
+                buffer = events.pop(); // keep incomplete
+
+                for (const event of events) {
+                    if (!event.startsWith('data: ')) continue;
+                    const data = JSON.parse(event.slice(6));
+
+                    if (data.type === 'status') {
+                        stepCount++;
+                        const pct = Math.min(Math.round((stepCount / totalSteps) * 95), 95);
+                        setProgress(pct, data.message);
+                        addTerminalLine(data.message, 'success');
+                    } else if (data.type === 'error') {
+                        setProgress(100, 'Error');
+                        addTerminalLine(data.message, 'error');
+                        return;
+                    } else if (data.type === 'result') {
+                        setProgress(100, 'Complete!');
+                        addTerminalLine('Pipeline complete ✓', 'success');
+                        setTimeout(() => showResults(data), 600);
+                    }
+                }
+            }
+        } catch (err) {
+            addTerminalLine('Network error: ' + err.message, 'error');
+            setProgress(100, 'Failed');
+        }
+    }
+
+    // ── Results ──
+    function setGauge(circleId, numberId, score, circumference) {
+        const circle = document.getElementById(circleId);
+        const numberEl = document.getElementById(numberId);
+        const offset = circumference - (score / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        const color = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--amber)' : 'var(--red)';
+        circle.style.stroke = color;
+        numberEl.textContent = score + '%';
+        numberEl.style.color = color;
+    }
+
+    function showResults(data) {
+        downloadId = data.download_id;
+        latexContent = data.latex;
+
+        const beforeScore = data.before_score || 0;
+        const afterScore = data.ats_score;
+        const circumference = 352; // 2 * π * 56
+
+        // Before gauge
+        setGauge('before-circle', 'before-number', beforeScore, circumference);
+
+        // After gauge
+        setGauge('after-circle', 'after-number', afterScore, circumference);
+
+        // Improvement badge
+        const diff = afterScore - beforeScore;
+        const badge = document.getElementById('improvement-badge');
+        if (diff > 0) {
+            badge.textContent = '+' + diff + ' pts';
+            badge.className = 'improvement-badge positive';
+        } else if (diff === 0) {
+            badge.textContent = '±0';
+            badge.className = 'improvement-badge neutral';
+        } else {
+            badge.textContent = diff + ' pts';
+            badge.className = 'improvement-badge neutral';
+        }
+
+        document.getElementById('meta-iterations').textContent = data.iterations;
+
+        // ATS Report
+        document.getElementById('report-text').textContent = data.ats_report;
+
+        // LaTeX
+        document.getElementById('latex-output').innerHTML = highlightLatex(escapeHtml(data.latex));
+
+        // Keywords
+        const bar = document.getElementById('keywords-bar');
+        bar.innerHTML = '';
+
+        if (data.matched_keywords && data.matched_keywords.length) {
+            const group = document.createElement('div');
+            group.className = 'keyword-group';
+            group.innerHTML = '<h4>Matched Keywords</h4><div class="keyword-tags">' +
+                data.matched_keywords.slice(0, 20).map(k => '<span class="keyword-tag">' + escapeHtml(k) + '</span>').join('') +
+                '</div>';
+            bar.appendChild(group);
+        }
+
+        if (data.missing_keywords && data.missing_keywords.length) {
+            const group = document.createElement('div');
+            group.className = 'keyword-group';
+            group.innerHTML = '<h4>Missing Keywords</h4><div class="keyword-tags">' +
+                data.missing_keywords.slice(0, 15).map(k => '<span class="keyword-tag missing">' + escapeHtml(k) + '</span>').join('') +
+                '</div>';
+            bar.appendChild(group);
+        }
+
+        showScreen('results');
+    }
+
+    function highlightLatex(html) {
+        // Simple syntax highlighting for LaTeX
+        html = html.replace(/(\\(?:documentclass|usepackage|begin|end|section|textbf|textit|href|underline|item|small|tiny|large|Huge|scshape|vspace|hspace|newcommand|renewcommand|setlength|addtolength|pagestyle|fancyhf|fancyfoot|titleformat|pdfgentounicode|raggedbottom|raggedright|urlstyle|input))/g, '<span class="cmd">$1</span>');
+        html = html.replace(/(%.+)/g, '<span class="cmt">$1</span>');
+        return html;
+    }
+
+    // ── Actions ──
+    function copyLatex() {
+        navigator.clipboard.writeText(latexContent).then(() => toast('LaTeX copied to clipboard!'));
+    }
+
+    function downloadTex() {
+        if (downloadId) {
+            window.open('/api/download/' + downloadId, '_blank');
+        } else {
+            // Fallback: download from memory
+            const blob = new Blob([latexContent], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'resume.tex';
+            a.click();
+        }
+    }
+
+    function toast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+</script>
+
+</body>
+</html>
