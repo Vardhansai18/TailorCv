@@ -270,59 +270,142 @@
             gap: 2rem;
         }
 
-        .terminal-box {
+        /* Pipeline Flow Visualization */
+        .pipeline-container {
             width: 100%;
-            max-width: 640px;
+            max-width: 800px;
             background: var(--bg-secondary);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
-            overflow: hidden;
+            padding: 2rem;
         }
 
-        .terminal-title-bar {
+        .pipeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--white);
+        }
+
+        .iteration-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 0.8rem 1rem;
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--amber-dim);
+            border: 1px solid var(--amber);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--amber);
+            font-weight: 700;
         }
 
-        .terminal-dot {
-            width: 10px;
-            height: 10px;
+        .iteration-badge .icon {
+            font-size: 1rem;
+        }
+
+        .pipeline-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pipeline-step.pending {
+            opacity: 0.5;
+        }
+
+        .pipeline-step.in-progress {
+            background: var(--amber-dim);
+            border-color: var(--amber);
+            box-shadow: 0 0 20px rgba(245, 166, 35, 0.2);
+        }
+
+        .pipeline-step.completed {
+            background: rgba(76, 175, 80, 0.08);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .pipeline-step.error {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.05);
         }
 
-        .terminal-dot.red { background: #ff5f57; }
-        .terminal-dot.yellow { background: #febc2e; }
-        .terminal-dot.green { background: #28c840; }
+        .pipeline-step.pending .step-icon { color: var(--white-dim); }
+        .pipeline-step.in-progress .step-icon { color: var(--amber); animation: pulse 1.5s ease infinite; }
+        .pipeline-step.completed .step-icon { color: var(--green); }
+        .pipeline-step.error .step-icon { color: var(--red); }
 
-        .terminal-title {
-            margin-left: 0.8rem;
-            font-size: 0.7rem;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 0.2rem;
+        }
+
+        .step-status {
+            font-size: 0.72rem;
             color: var(--white-dim);
         }
 
-        .terminal-body {
-            padding: 1.2rem;
-            min-height: 260px;
-            max-height: 360px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-            line-height: 1.8;
+        .pipeline-step.in-progress .step-status { color: var(--amber); }
+        .pipeline-step.completed .step-status { color: var(--green); }
+        .pipeline-step.error .step-status { color: var(--red); }
+
+        .step-connector {
+            position: absolute;
+            left: 19px;
+            top: 50px;
+            bottom: -8px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
         }
 
-        .terminal-line {
-            opacity: 0;
-            animation: line-in 0.3s ease forwards;
+        .pipeline-step:last-child .step-connector {
+            display: none;
         }
 
-        .terminal-line .check { color: var(--green); }
-        .terminal-line .spinner { color: var(--amber); animation: spin 1s linear infinite; display: inline-block; }
-
-        @keyframes line-in { to { opacity: 1; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .pipeline-step.completed .step-connector {
+            background: rgba(76, 175, 80, 0.3);
+        }
 
         /* Progress Bar */
         .progress-container {
@@ -834,8 +917,8 @@
                 <input type="text" id="baseurl-input" value="https://f5ai.pd.f5net.com/api">
             </div>
             <div class="setting-field">
-                <label>Max Iterations</label>
-                <input type="number" id="iterations-input" value="3" min="1" max="5">
+                <label>Target ATS Score (%)</label>
+                <input type="number" id="threshold-input" value="85" min="70" max="100">
             </div>
         </div>
 
@@ -849,15 +932,77 @@
 
 <!-- ═══════ SCREEN 2: PROCESSING ═══════ -->
 <div id="processing-screen" class="screen">
-    <div class="terminal-box">
-        <div class="terminal-title-bar">
-            <div class="terminal-dot red"></div>
-            <div class="terminal-dot yellow"></div>
-            <div class="terminal-dot green"></div>
-            <span class="terminal-title">tailorcv — pipeline</span>
+    <div class="pipeline-container">
+        <div class="pipeline-header">
+            <h2 class="pipeline-title">Resume Optimization Pipeline</h2>
+            <div class="iteration-badge" id="iteration-badge">
+                <span class="icon">⟳</span>
+                <span id="iteration-text">Iteration 0 / 3</span>
+            </div>
         </div>
-        <div class="terminal-body" id="terminal-body"></div>
+        
+        <div class="pipeline-steps" id="pipeline-steps">
+            <!-- Step 1: Parse -->
+            <div class="pipeline-step pending" id="step-parse">
+                <div class="step-connector"></div>
+                <div class="step-icon">📄</div>
+                <div class="step-content">
+                    <div class="step-title">Parse Resume</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Score Original -->
+            <div class="pipeline-step pending" id="step-score-original">
+                <div class="step-connector"></div>
+                <div class="step-icon">📊</div>
+                <div class="step-content">
+                    <div class="step-title">Score Original Resume</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Generate -->
+            <div class="pipeline-step pending" id="step-generate">
+                <div class="step-connector"></div>
+                <div class="step-icon">✨</div>
+                <div class="step-content">
+                    <div class="step-title">Generate Optimized Resume</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+            
+            <!-- Step 4: Assemble -->
+            <div class="pipeline-step pending" id="step-assemble">
+                <div class="step-connector"></div>
+                <div class="step-icon">🔧</div>
+                <div class="step-content">
+                    <div class="step-title">Assemble LaTeX Document</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+            
+            <!-- Step 5: Score New -->
+            <div class="pipeline-step pending" id="step-score">
+                <div class="step-connector"></div>
+                <div class="step-icon">📈</div>
+                <div class="step-content">
+                    <div class="step-title">Score Optimized Resume</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+            
+            <!-- Step 6: Finalize -->
+            <div class="pipeline-step pending" id="step-finalize">
+                <div class="step-icon">✅</div>
+                <div class="step-content">
+                    <div class="step-title">Finalize Output</div>
+                    <div class="step-status">Waiting...</div>
+                </div>
+            </div>
+        </div>
     </div>
+    
     <div class="progress-container">
         <div class="progress-label">
             <span id="progress-text">Initializing...</span>
@@ -924,8 +1069,8 @@
                         <div class="lbl">Iterations</div>
                     </div>
                     <div class="score-meta-item">
-                        <div class="val" id="meta-threshold">80</div>
-                        <div class="lbl">Threshold</div>
+                        <div class="val" id="meta-threshold">85</div>
+                        <div class="lbl">Target</div>
                     </div>
                 </div>
             </div>
@@ -1034,6 +1179,27 @@
         if (text) document.getElementById('progress-text').textContent = text;
     }
 
+    // ── Pipeline Step Management ──
+    function resetPipeline() {
+        const steps = ['step-parse', 'step-score-original', 'step-generate', 'step-assemble', 'step-score', 'step-finalize'];
+        steps.forEach(stepId => {
+            const step = document.getElementById(stepId);
+            step.className = 'pipeline-step pending';
+            step.querySelector('.step-status').textContent = 'Waiting...';
+        });
+    }
+
+    function updateStep(stepId, status, message) {
+        const step = document.getElementById(stepId);
+        if (!step) return;
+        step.className = 'pipeline-step ' + status;
+        step.querySelector('.step-status').textContent = message;
+    }
+
+    function updateIteration(current, max) {
+        document.getElementById('iteration-text').textContent = 'Iteration ' + current + ' / ' + max;
+    }
+
     // ── Generate ──
     async function startGeneration() {
         if (!selectedFile) { toast('Please upload a resume PDF'); return; }
@@ -1044,10 +1210,9 @@
 
         // Switch to processing screen
         showScreen('processing');
-        document.getElementById('terminal-body').innerHTML = '';
+        resetPipeline();
         setProgress(0, 'Starting pipeline...');
-        addTerminalLine('$ tailorcv --analyze --generate', 'info');
-        addTerminalLine('');
+        updateIteration(0, 3); // Max 3 iterations
 
         const formData = new FormData();
         formData.append('resume', selectedFile);
@@ -1057,7 +1222,8 @@
         formData.append('base_url', document.getElementById('baseurl-input').value);
         formData.append('api_key', apiKey);
         formData.append('instructions', document.getElementById('instructions-input').value.trim());
-        formData.append('max_iterations', document.getElementById('iterations-input').value);
+        formData.append('threshold', document.getElementById('threshold-input').value);
+        formData.append('max_iterations', '3');
 
         try {
             const response = await fetch('/api/generate', { method: 'POST', body: formData });
@@ -1066,6 +1232,7 @@
             let buffer = '';
             let stepCount = 0;
             const totalSteps = 12;
+            let currentIteration = 0;
 
             while (true) {
                 const { done, value } = await reader.read();
@@ -1073,7 +1240,7 @@
                 buffer += decoder.decode(value, { stream: true });
 
                 const events = buffer.split('\n\n');
-                buffer = events.pop(); // keep incomplete
+                buffer = events.pop();
 
                 for (const event of events) {
                     if (!event.startsWith('data: ')) continue;
@@ -1083,21 +1250,62 @@
                         stepCount++;
                         const pct = Math.min(Math.round((stepCount / totalSteps) * 95), 95);
                         setProgress(pct, data.message);
-                        addTerminalLine(data.message, 'success');
+
+                        // Update pipeline steps based on the message
+                        if (data.step === 'parse' || data.step === 'parse_done') {
+                            updateStep('step-parse', 'in-progress', data.message);
+                        } else if (data.step === 'parse_done') {
+                            updateStep('step-parse', 'completed', 'Extracted resume text ✓');
+                        } else if (data.step === 'before_score') {
+                            updateStep('step-score-original', 'in-progress', data.message);
+                        } else if (data.step === 'before_score_done') {
+                            updateStep('step-score-original', 'completed', data.message);
+                        } else if (data.step === 'generate' || data.step === 'generated') {
+                            updateStep('step-parse', 'completed', 'Resume parsed ✓');
+                            updateStep('step-score-original', 'completed', 'Original scored ✓');
+                            updateStep('step-generate', 'in-progress', data.message);
+                        } else if (data.step === 'generated') {
+                            updateStep('step-generate', 'completed', data.message);
+                            if (data.message.includes('Iteration')) {
+                                const match = data.message.match(/Iteration (\d+)/);
+                                if (match) {
+                                    currentIteration = parseInt(match[1]);
+                                    updateIteration(currentIteration, 3);
+                                }
+                            }
+                        } else if (data.step === 'assemble') {
+                            updateStep('step-assemble', 'in-progress', data.message);
+                            setTimeout(() => updateStep('step-assemble', 'completed', 'LaTeX assembled ✓'), 300);
+                        } else if (data.step === 'score') {
+                            updateStep('step-score', 'in-progress', data.message);
+                            setTimeout(() => updateStep('step-score', 'completed', data.message), 300);
+                        } else if (data.step === 'feedback') {
+                            updateStep('step-score', 'completed', 'Below threshold - retrying...');
+                            // Reset generate step for next iteration
+                            setTimeout(() => {
+                                updateStep('step-generate', 'pending', 'Preparing next iteration...');
+                                updateStep('step-assemble', 'pending', 'Waiting...');
+                                updateStep('step-score', 'pending', 'Waiting...');
+                            }, 500);
+                        } else if (data.step === 'finalize') {
+                            updateStep('step-finalize', 'in-progress', data.message);
+                        }
                     } else if (data.type === 'error') {
                         setProgress(100, 'Error');
-                        addTerminalLine(data.message, 'error');
+                        updateStep('step-finalize', 'error', data.message);
+                        toast('Error: ' + data.message);
                         return;
                     } else if (data.type === 'result') {
                         setProgress(100, 'Complete!');
-                        addTerminalLine('Pipeline complete ✓', 'success');
-                        setTimeout(() => showResults(data), 600);
+                        updateStep('step-finalize', 'completed', 'Resume ready ✓');
+                        setTimeout(() => showResults(data), 800);
                     }
                 }
             }
         } catch (err) {
-            addTerminalLine('Network error: ' + err.message, 'error');
+            updateStep('step-finalize', 'error', 'Network error: ' + err.message);
             setProgress(100, 'Failed');
+            toast('Network error: ' + err.message);
         }
     }
 
@@ -1142,6 +1350,7 @@
         }
 
         document.getElementById('meta-iterations').textContent = data.iterations;
+        document.getElementById('meta-threshold').textContent = document.getElementById('threshold-input').value;
 
         // ATS Report
         document.getElementById('report-text').textContent = data.ats_report;

@@ -166,11 +166,16 @@ def score_resume(state: ResumeState) -> dict:
 
 
 def evaluate_score(state: ResumeState) -> str:
-    """Decide whether to finalize or re-generate based on ATS score and iteration count."""
+    """
+    Decide whether to finalize or re-generate based on ATS score and iteration count.
+    
+    Primary stopping condition: score >= threshold (user-specified target ATS score %)
+    Safety limit: iteration >= max_iterations (default 10, prevents infinite loops)
+    """
     score = state.get("ats_score", 0)
     iteration = state.get("iteration", 0)
-    max_iterations = state.get("max_iterations", 2)
-    threshold = state.get("threshold", 80)
+    max_iterations = state.get("max_iterations", 10)
+    threshold = state.get("threshold", 85)
 
     if score >= threshold or iteration >= max_iterations:
         return "finalize"

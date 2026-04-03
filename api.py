@@ -89,8 +89,8 @@ async def generate_resume(
     base_url: str = Form("https://f5ai.pd.f5net.com/api"),
     api_key: str = Form(""),
     instructions: str = Form(""),
-    threshold: int = Form(80),
-    max_iterations: int = Form(3),
+    threshold: int = Form(85),
+    max_iterations: int = Form(10),
 ):
     """Process resume PDF + JD and stream progress events."""
     pdf_bytes = await resume.read()
