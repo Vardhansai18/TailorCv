@@ -12,7 +12,7 @@ import uuid
 from pathlib import Path
 
 import fitz  # PyMuPDF
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile, Request
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -41,6 +41,40 @@ def extract_text_from_pdf(pdf_bytes: bytes) -> str:
     return "\n".join(text_parts)
 
 
+def extract_candidate_name(resume_text: str) -> str:
+    """Extract candidate name from the beginning of the resume text."""
+    # Look for a name pattern in the first few lines
+    lines = [line.strip() for line in resume_text.split('\n') if line.strip()]
+    if not lines:
+        return "resume"
+    
+    # First non-empty line is typically the name
+    first_line = lines[0]
+    
+    # Basic validation: should be 2-5 words, each starting with capital
+    words = first_line.split()
+    if 2 <= len(words) <= 5 and all(w[0].isupper() for w in words if w and w[0].isalpha()):
+        # Sanitize for filename
+        name = '_'.join(words)
+        # Remove special chars
+        name = re.sub(r'[^a-zA-Z0-9_]', '', name)
+        return name
+    
+    # Fallback
+    return "resume"
+
+
+def create_filename(candidate_name: str, company_name: str) -> str:
+    """Create a sanitized filename from candidate and company names."""
+    # Sanitize company name
+    company = re.sub(r'[^a-zA-Z0-9_]', '', company_name.replace(' ', '_'))
+    if not company:
+        company = "Company"
+    
+    filename = f"{candidate_name}_{company}"
+    return filename
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index():
     return (STATIC_DIR / "index.html").read_text(encoding="utf-8")
@@ -50,6 +84,7 @@ async def index():
 async def generate_resume(
     resume: UploadFile = File(...),
     job_description: str = Form(...),
+    company_name: str = Form(""),
     model: str = Form("claude-sonnet-4-6"),
     base_url: str = Form("https://f5ai.pd.f5net.com/api"),
     api_key: str = Form(""),
@@ -72,7 +107,11 @@ async def generate_resume(
     if api_key:
         os.environ["OPENAI_API_KEY"] = api_key
 
-    job_id = uuid.uuid4().hex[:8]
+    # Extract candidate name and create filename
+    candidate_name = extract_candidate_name(resume_text)
+    if not company_name.strip():
+        company_name = "Company"
+    job_id = create_filename(candidate_name, company_name)
 
     async def event_stream():
         yield _sse({"type": "status", "message": "Parsing resume PDF...", "step": "parse"})
@@ -201,18 +240,18 @@ async def generate_resume(
 @app.get("/api/download/{job_id}")
 async def download_tex(job_id: str):
     # Sanitize job_id to prevent path traversal
-    if not re.match(r'^[a-f0-9]{8}$', job_id):
+    if not re.match(r'^[a-zA-Z0-9_]+$', job_id):
         return HTMLResponse("Invalid job ID", status_code=400)
     tex_path = OUTPUT_DIR / f"resume_{job_id}.tex"
     if not tex_path.exists():
         return HTMLResponse("File not found", status_code=404)
-    return FileResponse(str(tex_path), filename="resume.tex", media_type="application/x-tex")
+    return FileResponse(str(tex_path), filename=f"{job_id}.tex", media_type="application/x-tex")
 
 
 @app.get("/api/pdf/{job_id}")
-async def download_pdf(job_id: str):
+async def download_pdf(job_id: str, request: Request):
     """Compile the .tex file to PDF and return it."""
-    if not re.match(r'^[a-f0-9]{8}$', job_id):
+    if not re.match(r'^[a-zA-Z0-9_]+$', job_id):
         return HTMLResponse("Invalid job ID", status_code=400)
     tex_path = OUTPUT_DIR / f"resume_{job_id}.tex"
     if not tex_path.exists():
@@ -236,7 +275,18 @@ async def download_pdf(job_id: str):
                     status_code=500,
                 )
 
-    return FileResponse(str(pdf_path), filename="resume.pdf", media_type="application/pdf")
+    # Check if inline viewing is requested
+    inline = request.query_params.get('inline', '0') == '1'
+    headers = {}
+    if inline:
+        headers['Content-Disposition'] = 'inline'
+    
+    return FileResponse(
+        str(pdf_path), 
+        filename=f"{job_id}.pdf", 
+        media_type="application/pdf",
+        headers=headers
+    )
 
 
 def _sse(data: dict) -> str:

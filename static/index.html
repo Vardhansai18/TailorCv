@@ -599,7 +599,7 @@
             word-break: break-word;
         }
 
-        /* Right — LaTeX Code */
+        /* Right — LaTeX/PDF Panel */
         .latex-panel {
             flex: 1;
             display: flex;
@@ -617,6 +617,40 @@
             padding: 0.8rem 1.2rem;
             background: rgba(255,255,255,0.03);
             border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .latex-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .latex-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.4rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--white-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--white);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .tab-btn.active {
+            background: var(--amber-dim);
+            color: var(--amber);
+            border-color: var(--amber);
         }
 
         .latex-toolbar span {
@@ -655,6 +689,12 @@
             flex: 1;
             overflow: auto;
             padding: 1.2rem;
+            display: none;
+            min-height: 0;
+        }
+
+        .latex-code.active {
+            display: block;
         }
 
         .latex-code pre {
@@ -668,6 +708,28 @@
         .latex-code .cmd { color: #569cd6; }
         .latex-code .str { color: #ce9178; }
         .latex-code .cmt { color: #6a9955; }
+
+        /* PDF Preview */
+        .pdf-preview {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+            background: #525252;
+            position: relative;
+        }
+
+        .pdf-preview.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
+            min-height: 0;
+        }
 
         /* Back button */
         .back-btn {
@@ -755,6 +817,10 @@
 
         <!-- Settings -->
         <div class="settings-row">
+            <div class="setting-field">
+                <label>Company Name</label>
+                <input type="text" id="company-input" placeholder="e.g. Google, Microsoft...">
+            </div>
             <div class="setting-field">
                 <label>Model</label>
                 <input type="text" id="model-input" value="claude-sonnet-4-6">
@@ -869,18 +935,26 @@
             </div>
         </div>
 
-        <!-- Right: LaTeX -->
+        <!-- Right: LaTeX/PDF Preview -->
         <div class="latex-panel">
             <div class="latex-toolbar">
-                <span>resume.tex</span>
+                <div class="latex-toolbar-left">
+                    <div class="latex-tabs">
+                        <button class="tab-btn active" id="tab-latex" onclick="switchTab('latex')">LaTeX Code</button>
+                        <button class="tab-btn" id="tab-pdf" onclick="switchTab('pdf')">PDF Preview</button>
+                    </div>
+                </div>
                 <div class="actions">
                     <button class="toolbar-btn" onclick="copyLatex()">Copy</button>
                     <button class="toolbar-btn" id="download-btn" onclick="downloadTex()">Download .tex</button>
                     <button class="toolbar-btn primary" id="download-pdf-btn" onclick="downloadPdf()">Download PDF</button>
                 </div>
             </div>
-            <div class="latex-code">
+            <div class="latex-code active" id="latex-view">
                 <pre id="latex-output"></pre>
+            </div>
+            <div class="pdf-preview" id="pdf-view">
+                <iframe id="pdf-iframe"></iframe>
             </div>
         </div>
     </div>
@@ -978,6 +1052,7 @@
         const formData = new FormData();
         formData.append('resume', selectedFile);
         formData.append('job_description', jd);
+        formData.append('company_name', document.getElementById('company-input').value.trim());
         formData.append('model', document.getElementById('model-input').value);
         formData.append('base_url', document.getElementById('baseurl-input').value);
         formData.append('api_key', apiKey);
@@ -1125,8 +1200,27 @@
 
     function downloadPdf() {
         if (!downloadId) { toast('No resume generated yet'); return; }
-        toast('Compiling PDF...');
         window.open('/api/pdf/' + downloadId, '_blank');
+    }
+
+    function switchTab(tab) {
+        // Update tab buttons
+        document.getElementById('tab-latex').classList.toggle('active', tab === 'latex');
+        document.getElementById('tab-pdf').classList.toggle('active', tab === 'pdf');
+        
+        // Update content views
+        document.getElementById('latex-view').classList.toggle('active', tab === 'latex');
+        document.getElementById('pdf-view').classList.toggle('active', tab === 'pdf');
+        
+        // Load PDF iframe if switching to PDF view
+        if (tab === 'pdf' && downloadId) {
+            const iframe = document.getElementById('pdf-iframe');
+            // Always reload to ensure it displays
+            const pdfUrl = '/api/pdf/' + downloadId + '?inline=1';
+            if (iframe.src !== pdfUrl) {
+                iframe.src = pdfUrl;
+            }
+        }
     }
 
     function toast(msg) {
