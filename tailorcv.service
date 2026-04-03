@@ -1,0 +1,19 @@
+[Unit]
+Description=TailorCV - ATS Resume Optimization Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/root/projects/TailorCv
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="OPENAI_API_KEY=sk-a698415989cc4588bb67ad3b2be41e00"
+ExecStart=/usr/bin/python3 /root/projects/TailorCv/api.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/root/projects/TailorCv/tailorcv.log
+StandardError=append:/root/projects/TailorCv/tailorcv.log
+
+[Install]
+WantedBy=multi-user.target
