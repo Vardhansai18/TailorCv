@@ -1809,11 +1809,11 @@
                                         <li>Run: <code style="background: #f4f4f4; padding: 2px 6px;">pdflatex resume.tex</code></li>
                                     </ol>
                                 </div>
-                                <button onclick="document.getElementById('download-tex-btn').click()" 
-                                        style="background: #4a90e2; color: white; border: none; padding: 12px 24px; 
-                                               font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                                <a href="/api/download/${downloadId}" download
+                                   style="display: inline-block; background: #4a90e2; color: white; border: none; padding: 12px 24px; 
+                                          font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px; text-decoration: none;">
                                     📥 Download LaTeX File (.tex)
-                                </button>
+                                </a>
                             </div>
                         `;
                     } else if (response.ok) {
@@ -1830,11 +1830,11 @@
                     pdfView.innerHTML = `
                         <div style="padding: 40px; text-align: center;">
                             <p style="color: #ff6b6b;">Unable to load PDF preview. Please download the .tex file instead.</p>
-                            <button onclick="document.getElementById('download-tex-btn').click()" 
-                                    style="background: #4a90e2; color: white; border: none; padding: 12px 24px; 
-                                           font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                            <a href="/api/download/${downloadId}" download
+                               style="display: inline-block; background: #4a90e2; color: white; border: none; padding: 12px 24px; 
+                                      font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px; text-decoration: none;">
                                 📥 Download LaTeX File
-                            </button>
+                            </a>
                         </div>
                     `;
                 });
