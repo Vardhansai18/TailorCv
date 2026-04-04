@@ -255,6 +255,25 @@ async def download_pdf(job_id: str, request: Request):
 
     pdf_path = OUTPUT_DIR / f"resume_{job_id}.pdf"
     if not pdf_path.exists():
+        # Check if pdflatex is available
+        import shutil as sh
+        if sh.which("pdflatex") is None:
+            return HTMLResponse(
+                "<html><body style='font-family: Arial; padding: 20px;'>"
+                "<h2>⚠️ PDF Compilation Not Available</h2>"
+                "<p>This server doesn't have LaTeX installed (common on cloud platforms like Render).</p>"
+                "<p><strong>To get your PDF:</strong></p>"
+                "<ol>"
+                "<li>Download the .tex file (LaTeX source)</li>"
+                "<li>Use <a href='https://www.overleaf.com' target='_blank'>Overleaf.com</a> (free online LaTeX editor):</li>"
+                "<ul><li>Create a new project → Upload the .tex file → Click 'Recompile' → Download PDF</li></ul>"
+                "<li>Or install LaTeX locally and run: <code>pdflatex resume.tex</code></li>"
+                "</ol>"
+                f"<p><a href='/api/download/{job_id}'>← Download .tex file now</a></p>"
+                "</body></html>",
+                status_code=503,
+            )
+        
         # Compile in a temp dir to avoid polluting output/ with .aux/.log
         with tempfile.TemporaryDirectory() as tmpdir:
             result = subprocess.run(

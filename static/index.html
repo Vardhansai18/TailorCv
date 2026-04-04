@@ -1780,11 +1780,64 @@
         // Load PDF iframe if switching to PDF view
         if (tab === 'pdf' && downloadId) {
             const iframe = document.getElementById('pdf-iframe');
-            // Always reload to ensure it displays
-            const pdfUrl = '/api/pdf/' + downloadId + '?inline=1';
-            if (iframe.src !== pdfUrl) {
-                iframe.src = pdfUrl;
-            }
+            const pdfView = document.getElementById('pdf-view');
+            
+            // Check if PDF is available first
+            fetch('/api/pdf/' + downloadId + '?inline=1', { method: 'HEAD' })
+                .then(response => {
+                    if (response.status === 503) {
+                        // PDF compilation not available - show message
+                        pdfView.innerHTML = `
+                            <div style="padding: 40px; text-align: center; font-family: Arial;">
+                                <h2 style="color: #ff6b6b;">⚠️ PDF Preview Not Available</h2>
+                                <p style="margin: 20px 0; line-height: 1.6;">
+                                    This server doesn't have LaTeX installed (common on cloud platforms like Render).<br>
+                                    <strong>Download the .tex file and compile it yourself:</strong>
+                                </p>
+                                <div style="margin: 30px 0; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+                                    <h3 style="color: #4a90e2;">Option 1: Use Overleaf (Easiest)</h3>
+                                    <ol style="line-height: 1.8;">
+                                        <li>Download the .tex file using the button below</li>
+                                        <li>Go to <a href="https://www.overleaf.com" target="_blank" style="color: #4a90e2;">Overleaf.com</a> (free online LaTeX editor)</li>
+                                        <li>Create New Project → Upload Project → Select your .tex file</li>
+                                        <li>Click "Recompile" → Download PDF</li>
+                                    </ol>
+                                    <h3 style="color: #4a90e2; margin-top: 30px;">Option 2: Use Local LaTeX</h3>
+                                    <ol style="line-height: 1.8;">
+                                        <li>Download the .tex file</li>
+                                        <li>Install LaTeX (TeX Live, MiKTeX, or MacTeX)</li>
+                                        <li>Run: <code style="background: #f4f4f4; padding: 2px 6px;">pdflatex resume.tex</code></li>
+                                    </ol>
+                                </div>
+                                <button onclick="document.getElementById('download-tex-btn').click()" 
+                                        style="background: #4a90e2; color: white; border: none; padding: 12px 24px; 
+                                               font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                                    📥 Download LaTeX File (.tex)
+                                </button>
+                            </div>
+                        `;
+                    } else if (response.ok) {
+                        // PDF available - load it
+                        const pdfUrl = '/api/pdf/' + downloadId + '?inline=1';
+                        if (!iframe || iframe.src !== pdfUrl) {
+                            pdfView.innerHTML = '<iframe id="pdf-iframe"></iframe>';
+                            document.getElementById('pdf-iframe').src = pdfUrl;
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error('Error checking PDF availability:', err);
+                    pdfView.innerHTML = `
+                        <div style="padding: 40px; text-align: center;">
+                            <p style="color: #ff6b6b;">Unable to load PDF preview. Please download the .tex file instead.</p>
+                            <button onclick="document.getElementById('download-tex-btn').click()" 
+                                    style="background: #4a90e2; color: white; border: none; padding: 12px 24px; 
+                                           font-size: 16px; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+                                📥 Download LaTeX File
+                            </button>
+                        </div>
+                    `;
+                });
         }
     }
 
