@@ -5,7 +5,7 @@ Usage:
     python main.py                                         # uses sample data
     python main.py --resume path/to/resume.txt --jd path/to/jd.txt
     python main.py --resume resume.txt --jd jd.txt --instructions "Focus on backend skills"
-    python main.py --threshold 85 --max-iterations 3
+    python main.py --threshold 80 --max-iterations 3
 """
 
 import argparse

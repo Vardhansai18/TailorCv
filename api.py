@@ -89,7 +89,7 @@ async def generate_resume(
     base_url: str = Form(""),
     api_key: str = Form(""),
     instructions: str = Form(""),
-    threshold: int = Form(85),
+    threshold: int = Form(80),
     max_iterations: int = Form(10),
 ):
     """Process resume PDF + JD and stream progress events."""

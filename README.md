@@ -6,7 +6,7 @@ ATS-optimized resume generator powered by **LangGraph**. Compares your resume ag
 
 - **Multi-LLM Support** — Use Anthropic Claude, OpenAI GPT, Google Gemini, or any OpenAI-compatible endpoint
 - **LangGraph Pipeline** — Stateful graph with parse → generate → assemble → score → feedback loop
-- **ATS Scoring Loop** — Automatically re-generates if the ATS score is below threshold (default: 85/100)
+- **ATS Scoring Loop** — Automatically re-generates if the ATS score is below threshold (default: 80/100)
 - **STAR Format Enforcement** — Every bullet follows Situation → Task → Action → Result
 - **Keyword Optimization** — Aligns resume keywords with JD while limiting changes to 20–30% per bullet
 - **LaTeX Output** — Produces a clean, compilable `.tex` file ready for `pdflatex`
@@ -112,7 +112,7 @@ python main.py --resume data/sample_resume.txt --jd data/sample_jd.txt \
 ### Adjust threshold and iterations
 
 ```bash
-python main.py --threshold 85 --max-iterations 3
+python main.py --threshold 80 --max-iterations 3
 ```
 
 ### Custom output path

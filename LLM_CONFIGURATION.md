@@ -214,7 +214,7 @@ POST /api/generate
 - model: str (e.g., "openai:gpt-4o")
 - base_url: str (optional, for custom endpoints)
 - api_key: str (optional)
-- threshold: int (85)
+- threshold: int (80)
 - max_iterations: int (10)
 ```
 
