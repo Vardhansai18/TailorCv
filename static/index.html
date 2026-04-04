@@ -1143,6 +1143,14 @@
                         </button>
                     </div>
                     <small style="color: var(--white-dim); font-size: 0.7rem; margin-top: 2px; display: block;">Leave blank if using env variables</small>
+                    <a id="api-key-help" href="https://aistudio.google.com/app/api-keys" target="_blank" 
+                       style="display: none; margin-top: 8px; padding: 8px 14px; background: var(--accent); color: var(--dark); 
+                              border-radius: 6px; text-decoration: none; font-size: 0.75rem; font-weight: 600; 
+                              text-align: center; transition: all 0.2s; cursor: pointer;"
+                       onmouseover="this.style.opacity='0.9'; this.style.transform='translateY(-1px)'"
+                       onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)'">
+                        🔑 Click here to generate Google Gemini API Key
+                    </a>
                 </div>
                 
                 <div class="setting-field" id="baseurl-field">
@@ -1399,6 +1407,14 @@
                 document.getElementById('baseurl-input').placeholder = 'https://your-api-endpoint.com/v1';
             } else {
                 baseUrlField.style.display = 'none';
+            }
+            
+            // Show/hide API key help link for Google Gemini
+            const apiKeyHelp = document.getElementById('api-key-help');
+            if (provider === 'google') {
+                apiKeyHelp.style.display = 'block';
+            } else {
+                apiKeyHelp.style.display = 'none';
             }
         }
     }
