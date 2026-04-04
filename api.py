@@ -85,8 +85,8 @@ async def generate_resume(
     resume: UploadFile = File(...),
     job_description: str = Form(...),
     company_name: str = Form(""),
-    model: str = Form("claude-sonnet-4-6"),
-    base_url: str = Form("https://f5ai.pd.f5net.com/api"),
+    model: str = Form("anthropic:claude-sonnet-4-6"),
+    base_url: str = Form(""),
     api_key: str = Form(""),
     instructions: str = Form(""),
     threshold: int = Form(85),
@@ -101,11 +101,6 @@ async def generate_resume(
             _error_stream("Could not extract text from PDF. Ensure it's not a scanned image."),
             media_type="text/event-stream",
         )
-
-    # Set API key in env if provided
-    import os
-    if api_key:
-        os.environ["OPENAI_API_KEY"] = api_key
 
     # Extract candidate name and create filename
     candidate_name = extract_candidate_name(resume_text)
@@ -128,7 +123,7 @@ async def generate_resume(
         try:
             loop_pre = asyncio.get_event_loop()
             before_score, before_report = await loop_pre.run_in_executor(
-                None, lambda: _score_original_resume(resume_text, job_description, model, base_url)
+                None, lambda: _score_original_resume(resume_text, job_description, model, base_url, api_key)
             )
             yield _sse({"type": "status", "message": f"Original ATS Score: {before_score}/100", "step": "before_score_done"})
         except Exception as e:
@@ -145,6 +140,7 @@ async def generate_resume(
             "custom_instructions": instructions,
             "model_name": model,
             "base_url": base_url,
+            "api_key": api_key,
             "latex_sections": {},
             "full_latex": "",
             "ats_score": 0,
@@ -297,10 +293,10 @@ async def _error_stream(msg: str):
     yield _sse({"type": "error", "message": msg})
 
 
-def _score_original_resume(resume_text: str, job_description: str, model_name: str, base_url: str) -> tuple[int, str]:
+def _score_original_resume(resume_text: str, job_description: str, model_name: str, base_url: str, api_key: str = "") -> tuple[int, str]:
     """Score the original resume text against the JD using the same ATS scoring prompt."""
     from langchain_core.messages import HumanMessage, SystemMessage
-    llm = get_llm(model_name, base_url)
+    llm = get_llm(model_name, base_url, api_key)
     prompt = ATS_SCORE_PROMPT.format(
         job_description=job_description,
         resume_latex=resume_text,

@@ -12,14 +12,47 @@ MAX_RETRIES = 3
 RETRY_BASE_DELAY = 15  # seconds
 
 
-def get_llm(model_name: str = "anthropic:claude-sonnet-4-6", base_url: str = ""):
-    if base_url:
-        # Custom endpoint — use OpenAI-compatible client with base_url
+def get_llm(model_name: str = "anthropic:claude-sonnet-4-6", base_url: str = "", api_key: str = ""):
+    """
+    Generic LLM initialization supporting multiple providers.
+    
+    Supported formats:
+    - Anthropic: "anthropic:claude-sonnet-4-6" or "claude-sonnet-4-6"
+    - OpenAI: "openai:gpt-4o" or "gpt-4o"
+    - Google: "google:gemini-1.5-pro" or "gemini-1.5-pro"
+    - Custom OpenAI-compatible endpoint: any model name with base_url set
+    
+    Args:
+        model_name: Model identifier (with or without provider prefix)
+        base_url: Custom API endpoint (for OpenAI-compatible APIs)
+        api_key: Optional API key (if not set via environment variables)
+    """
+    import os
+    
+    # Set API key in environment if provided
+    if api_key:
+        # Detect provider and set appropriate env var
+        model_lower = model_name.lower()
+        if "google" in model_lower or "gemini" in model_lower:
+            os.environ["GOOGLE_API_KEY"] = api_key
+        elif "anthropic" in model_lower or "claude" in model_lower:
+            os.environ["ANTHROPIC_API_KEY"] = api_key
+        else:
+            # Default to OpenAI for custom endpoints and OpenAI models
+            os.environ["OPENAI_API_KEY"] = api_key
+    
+    # Only use base_url if explicitly provided and not empty
+    # Standard providers (Anthropic, OpenAI, Google) should not have base_url
+    if base_url and base_url.strip():
+        # Custom OpenAI-compatible endpoint (e.g., Azure, F5 proxy, local LLMs)
         return ChatOpenAI(
             model=model_name,
             base_url=base_url,
             temperature=0.3,
         )
+    
+    # Standard LangChain model initialization (auto-detects provider)
+    # Supports: openai:gpt-4, anthropic:claude-3, google:gemini-pro, etc.
     return init_chat_model(model_name, temperature=0.3)
 
 
@@ -61,7 +94,11 @@ def parse_inputs(state: ResumeState) -> dict:
 
 def generate_resume(state: ResumeState) -> dict:
     """Call the LLM with the ATS resume prompt to generate LaTeX sections."""
-    llm = get_llm(state.get("model_name", "anthropic:claude-sonnet-4-6"), state.get("base_url", ""))
+    llm = get_llm(
+        state.get("model_name", "anthropic:claude-sonnet-4-6"),
+        state.get("base_url", ""),
+        state.get("api_key", "")
+    )
 
     feedback_section = ""
     if state.get("feedback"):
@@ -127,7 +164,11 @@ def assemble_latex(state: ResumeState) -> dict:
 
 def score_resume(state: ResumeState) -> dict:
     """Call the LLM with the ATS scoring prompt to evaluate the generated resume."""
-    llm = get_llm(state.get("model_name", "anthropic:claude-sonnet-4-6"), state.get("base_url", ""))
+    llm = get_llm(
+        state.get("model_name", "anthropic:claude-sonnet-4-6"),
+        state.get("base_url", ""),
+        state.get("api_key", "")
+    )
 
     prompt = ATS_SCORE_PROMPT.format(
         job_description=state["job_description"],

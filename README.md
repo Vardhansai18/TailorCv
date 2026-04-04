@@ -4,11 +4,13 @@ ATS-optimized resume generator powered by **LangGraph**. Compares your resume ag
 
 ## Features
 
+- **Multi-LLM Support** — Use Anthropic Claude, OpenAI GPT, Google Gemini, or any OpenAI-compatible endpoint
 - **LangGraph Pipeline** — Stateful graph with parse → generate → assemble → score → feedback loop
-- **ATS Scoring Loop** — Automatically re-generates if the ATS score is below threshold (default: 80/100)
+- **ATS Scoring Loop** — Automatically re-generates if the ATS score is below threshold (default: 85/100)
 - **STAR Format Enforcement** — Every bullet follows Situation → Task → Action → Result
 - **Keyword Optimization** — Aligns resume keywords with JD while limiting changes to 20–30% per bullet
 - **LaTeX Output** — Produces a clean, compilable `.tex` file ready for `pdflatex`
+- **Web Interface** — Beautiful UI with real-time progress tracking
 
 ## Project Structure
 
@@ -37,11 +39,31 @@ cd TailorCv
 pip install -r requirements.txt
 ```
 
-Set your API key:
+### API Keys
 
+TailorCv supports multiple LLM providers. Set the appropriate API key based on your choice:
+
+**Anthropic Claude** (default):
+```bash
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+```
+
+**OpenAI GPT**:
+```bash
+export OPENAI_API_KEY="your-openai-api-key"
+```
+
+**Google Gemini**:
 ```bash
 export GOOGLE_API_KEY="your-google-api-key"
 ```
+
+**Custom Endpoint** (e.g., Azure, F5 proxy, local LLMs):
+```bash
+export OPENAI_API_KEY="your-api-key"  # Or provide via --api-key flag
+```
+
+> 📖 **See [LLM_CONFIGURATION.md](LLM_CONFIGURATION.md) for detailed provider setup, model options, and advanced configuration.**
 
 ## Usage
 
@@ -49,6 +71,29 @@ export GOOGLE_API_KEY="your-google-api-key"
 
 ```bash
 python main.py
+```
+
+### With specific LLM provider
+
+**Anthropic Claude:**
+```bash
+python main.py --model anthropic:claude-sonnet-4-6
+```
+
+**OpenAI GPT:**
+```bash
+python main.py --model openai:gpt-4o
+```
+
+**Google Gemini:**
+```bash
+python main.py --model google_genai:gemini-2.5-flash
+```
+
+**Custom endpoint:**
+```bash
+python main.py --model your-model-name --base-url https://your-endpoint.com/v1
+```
 ```
 
 ### Custom resume and JD

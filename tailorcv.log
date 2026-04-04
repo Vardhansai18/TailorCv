@@ -1,11 +1,41 @@
-INFO:     Started server process [72538]
+INFO:     Started server process [78423]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     172.18.1.143:50304 - "GET / HTTP/1.1" 200 OK
-INFO:     172.18.1.143:50305 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     172.18.1.143:50553 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:51142 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:51143 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:51731 - "GET /api/pdf/Mohan_Vamsi_Chekuri_Pega?inline=1 HTTP/1.1" 200 OK
+INFO:     172.18.1.143:53434 - "GET /api/pdf/Mohan_Vamsi_Chekuri_Pega?inline=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48172 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:54150 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:55263 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:55265 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:55756 - "GET /api/pdf/Sai_Vardhan_Pallerla_csg HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49197 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49199 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49386 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49387 - "GET /api/pdf/Sai_Vardhan_Pallerla_Netskope7634732 HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49533 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49656 - "GET /api/pdf/Sai_Vardhan_Pallerla_Netskope7634731 HTTP/1.1" 200 OK
+INFO:     172.18.1.143:49785 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.232.109:53602 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.232.109:53602 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     172.18.1.143:59665 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.1.143:59668 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.1.143:59668 - "GET /api/pdf/Sai_Vardhan_Pallerla_HPEVPNZTNAClientAgentWindows HTTP/1.1" 200 OK
+INFO:     172.18.3.120:65273 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:51188 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:51778 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:51950 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:52116 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.3.120:52117 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:52485 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.3.120:52487 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:52913 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:53157 - "GET / HTTP/1.1" 200 OK
+INFO:     172.18.3.120:53295 - "POST /api/generate HTTP/1.1" 200 OK
+INFO:     172.18.3.120:54133 - "GET / HTTP/1.1" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [72538]
+INFO:     Finished server process [78423]

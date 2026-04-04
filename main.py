@@ -70,28 +70,37 @@ def main():
         default="",
         help="Custom API base URL (for corporate/proxy endpoints)",
     )
+    parser.add_argument(
+        "--api-key",
+        default="",
+        help="API key (alternative to environment variables)",
+    )
 
     args = parser.parse_args()
 
-    # Validate API key based on provider
-    if args.base_url:
-        # Custom endpoint uses OPENAI_API_KEY
-        if not os.environ.get("OPENAI_API_KEY"):
-            print("Error: Set the OPENAI_API_KEY environment variable for custom endpoints.")
-            print("  export OPENAI_API_KEY='your-api-key-here'")
-            sys.exit(1)
-    else:
-        provider = args.model.split(":")[0] if ":" in args.model else "google_genai"
-        api_key_map = {
-            "google_genai": "GOOGLE_API_KEY",
-            "anthropic": "ANTHROPIC_API_KEY",
-            "openai": "OPENAI_API_KEY",
-        }
-        required_key = api_key_map.get(provider, f"{provider.upper()}_API_KEY")
-        if not os.environ.get(required_key):
-            print(f"Error: Set the {required_key} environment variable.")
-            print(f"  export {required_key}='your-api-key-here'")
-            sys.exit(1)
+    # Validate API key based on provider (only if not provided via --api-key)
+    if not args.api_key:
+        if args.base_url:
+            # Custom endpoint uses OPENAI_API_KEY
+            if not os.environ.get("OPENAI_API_KEY"):
+                print("Error: Set the OPENAI_API_KEY environment variable for custom endpoints.")
+                print("  export OPENAI_API_KEY='your-api-key-here'")
+                print("  Or use --api-key flag")
+                sys.exit(1)
+        else:
+            provider = args.model.split(":")[0] if ":" in args.model else "google_genai"
+            api_key_map = {
+                "google_genai": "GOOGLE_API_KEY",
+                "google": "GOOGLE_API_KEY",
+                "anthropic": "ANTHROPIC_API_KEY",
+                "openai": "OPENAI_API_KEY",
+            }
+            required_key = api_key_map.get(provider, f"{provider.upper()}_API_KEY")
+            if not os.environ.get(required_key):
+                print(f"Error: Set the {required_key} environment variable.")
+                print(f"  export {required_key}='your-api-key-here'")
+                print(f"  Or use --api-key flag")
+                sys.exit(1)
 
     resume_text = load_text(args.resume)
     jd_text = load_text(args.jd)
@@ -115,6 +124,7 @@ def main():
         "custom_instructions": args.instructions,
         "model_name": args.model,
         "base_url": args.base_url,
+        "api_key": args.api_key,
         "latex_sections": {},
         "full_latex": "",
         "ats_score": 0,
@@ -122,6 +132,7 @@ def main():
         "feedback": "",
         "iteration": 0,
         "max_iterations": args.max_iterations,
+        "threshold": args.threshold,
     }
 
     print("\nRunning pipeline...\n")

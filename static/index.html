@@ -55,48 +55,49 @@
            SCREEN 1 — HERO / UPLOAD
            ══════════════════════════════════════ */
         #hero-screen {
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 2rem;
-            gap: 4rem;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .hero-left {
-            flex: 1;
-            max-width: 520px;
+            width: 100%;
+            margin-bottom: 1.5rem;
         }
 
         .hero-left h1 {
             font-family: var(--font-heading);
-            font-weight: 900;
-            font-size: 3.5rem;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 1.2rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
         }
 
         .hero-left h1 span { color: var(--amber); }
 
         .hero-left p {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--white-dim);
-            line-height: 1.7;
-            max-width: 420px;
+            line-height: 1.5;
+            display: none; /* Hide description for compact view */
         }
 
         .hero-right {
-            flex: 1;
-            max-width: 540px;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 1.2rem;
+            gap: 1rem;
         }
 
         /* Drop Zone */
         .drop-zone {
             border: 2px dashed rgba(245,166,35,0.4);
             border-radius: 12px;
-            padding: 2.5rem 2rem;
+            padding: 1.5rem 1.5rem;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -116,13 +117,13 @@
         }
 
         .drop-zone-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
             display: block;
         }
 
         .drop-zone-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--white-dim);
         }
 
@@ -213,6 +214,36 @@
 
         .setting-field input:focus, .setting-field select:focus {
             border-color: var(--amber);
+        }
+
+        /* Password Toggle */
+        .password-field {
+            position: relative;
+        }
+
+        .password-field input {
+            padding-right: 2.5rem; /* Make room for eye icon */
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--white-dim);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: var(--amber);
         }
 
         /* CTA Button */
@@ -836,10 +867,11 @@
 
         /* ── Responsive ── */
         @media (max-width: 900px) {
-            #hero-screen { flex-direction: column; gap: 2rem; padding: 1.5rem; }
-            .hero-left h1 { font-size: 2.5rem; }
+            #hero-screen { padding: 1.5rem; }
+            .hero-left h1 { font-size: 1.5rem; }
             .results-split { flex-direction: column; }
             .score-panel { width: 100%; }
+            .settings-row { grid-template-columns: 1fr; }
         }
 
         /* ── Toast ── */
@@ -873,15 +905,14 @@
 <!-- ═══════ SCREEN 1: HERO ═══════ -->
 <div id="hero-screen" class="screen active">
     <div class="hero-left">
-        <h1>Your Resume.<br><span>Engineered</span><br>for ATS.</h1>
-        <p>Upload your resume PDF and paste the job description. TailorCV's AI pipeline generates an ATS-optimized LaTeX resume, scores it, and iterates until it exceeds 80%.</p>
+        <h1>TailorCV - <span>ATS Resume Generator</span></h1>
     </div>
 
     <div class="hero-right">
         <!-- PDF Drop Zone -->
         <div class="drop-zone" id="drop-zone" onclick="document.getElementById('resume-input').click()">
             <span class="drop-zone-icon">📄</span>
-            <div class="drop-zone-label">Drop your <strong>Resume PDF</strong> here or click to browse</div>
+            <div class="drop-zone-label">Drop <strong>Resume PDF</strong> or click to browse</div>
             <div class="drop-zone-filename" id="file-name"></div>
             <input type="file" id="resume-input" accept=".pdf">
         </div>
@@ -905,16 +936,39 @@
                 <input type="text" id="company-input" placeholder="e.g. Google, Microsoft...">
             </div>
             <div class="setting-field">
-                <label>Model</label>
-                <input type="text" id="model-input" value="claude-sonnet-4-6">
+                <label>LLM Provider</label>
+                <select id="provider-select" onchange="updateModelPlaceholder()">
+                    <option value="anthropic">Anthropic Claude</option>
+                    <option value="openai">OpenAI GPT</option>
+                    <option value="google">Google Gemini</option>
+                    <option value="custom">Custom Endpoint</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="settings-row">
+            <div class="setting-field">
+                <label>Model Name</label>
+                <input type="text" id="model-input" value="claude-sonnet-4-6" placeholder="e.g. claude-sonnet-4-6">
+                <small id="model-hint" style="color: var(--white-dim); font-size: 0.7rem; margin-top: 2px; display: block;">Examples: claude-sonnet-4-6, gpt-4o, gemini-1.5-pro</small>
             </div>
             <div class="setting-field">
                 <label>API Key</label>
-                <input type="password" id="apikey-input" placeholder="sk-...">
+                <div class="password-field">
+                    <input type="password" id="apikey-input" placeholder="Your API key">
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" title="Show/Hide API Key">
+                        <span id="password-toggle-icon">👁️</span>
+                    </button>
+                </div>
+                <small style="color: var(--white-dim); font-size: 0.7rem; margin-top: 2px; display: block;">Leave blank if using env variables</small>
             </div>
-            <div class="setting-field">
-                <label>Base URL</label>
-                <input type="text" id="baseurl-input" value="https://f5ai.pd.f5net.com/api">
+        </div>
+        
+        <div class="settings-row">
+            <div class="setting-field" id="baseurl-field">
+                <label>Custom API Endpoint</label>
+                <input type="text" id="baseurl-input" value="" placeholder="https://your-api-endpoint.com/v1">
+                <small style="color: var(--white-dim); font-size: 0.7rem; margin-top: 2px; display: block;">For Azure OpenAI, F5 proxy, or local LLM endpoints</small>
             </div>
             <div class="setting-field">
                 <label>Target ATS Score (%)</label>
@@ -1113,6 +1167,54 @@
     let selectedFile = null;
     let downloadId = null;
     let latexContent = '';
+
+    // ── Provider Model Presets ──
+    const providerPresets = {
+        'anthropic': {
+            model: 'anthropic:claude-sonnet-4-6',
+            baseUrl: '',  // Empty - handled by LangChain
+            hint: 'Examples: anthropic:claude-sonnet-4-6, anthropic:claude-3-5-sonnet-20241022',
+            showBaseUrl: false
+        },
+        'openai': {
+            model: 'openai:gpt-4o',
+            baseUrl: '',  // Empty - handled by LangChain
+            hint: 'Examples: openai:gpt-4o, openai:gpt-4-turbo, openai:gpt-3.5-turbo',
+            showBaseUrl: false
+        },
+        'google': {
+            model: 'google_genai:gemini-2.5-flash',
+            baseUrl: '',  // Empty - handled by LangChain
+            hint: 'Examples: google_genai:gemini-2.5-flash, google_genai:gemini-2.5-pro, google_genai:gemini-flash-latest',
+            showBaseUrl: false
+        },
+        'custom': {
+            model: '',
+            baseUrl: '',
+            hint: 'Enter your model name and custom API endpoint URL',
+            showBaseUrl: true
+        }
+    };
+
+    function updateModelPlaceholder() {
+        const provider = document.getElementById('provider-select').value;
+        const preset = providerPresets[provider];
+        if (preset) {
+            document.getElementById('model-input').value = preset.model;
+            document.getElementById('model-input').placeholder = preset.model || 'Enter model name';
+            document.getElementById('baseurl-input').value = preset.baseUrl;
+            document.getElementById('model-hint').textContent = preset.hint;
+            
+            // Show/hide base URL field based on provider
+            const baseUrlField = document.getElementById('baseurl-input').closest('.setting-field');
+            if (preset.showBaseUrl) {
+                baseUrlField.style.display = 'flex';
+                document.getElementById('baseurl-input').placeholder = 'https://your-api-endpoint.com/v1';
+            } else {
+                baseUrlField.style.display = 'none';
+            }
+        }
+    }
 
     // ── Screen Management ──
     function showScreen(name) {
@@ -1439,6 +1541,25 @@
         t.textContent = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // Initialize UI on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateModelPlaceholder(); // Set initial provider configuration
+    });
+
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+        const input = document.getElementById('apikey-input');
+        const icon = document.getElementById('password-toggle-icon');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = '🙈'; // Hide icon (monkey covering eyes)
+        } else {
+            input.type = 'password';
+            icon.textContent = '👁️'; // Show icon (eye)
+        }
     }
 </script>
 

@@ -7,6 +7,7 @@ class ResumeState(TypedDict):
     custom_instructions: str
     model_name: str
     base_url: str
+    api_key: str
     latex_sections: dict[str, str]
     full_latex: str
     ats_score: int
