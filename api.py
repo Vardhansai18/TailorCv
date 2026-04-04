@@ -244,7 +244,7 @@ async def download_tex(job_id: str):
     return FileResponse(str(tex_path), filename=f"{job_id}.tex", media_type="application/x-tex")
 
 
-@app.get("/api/pdf/{job_id}")
+@app.api_route("/api/pdf/{job_id}", methods=["GET", "HEAD"])
 async def download_pdf(job_id: str, request: Request):
     """Compile the .tex file to PDF and return it."""
     if not re.match(r'^[a-zA-Z0-9_]+$', job_id):
